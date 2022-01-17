@@ -4,18 +4,8 @@ import torch
 import transformers
 import numpy as np
 
-data_load_config = {
-    "raw_data_path": "/content/drive/MyDrive/stagirovka/TlkPersonaChatRus/dialogues.tsv",
-    "proc_data_path": "/content/drive/MyDrive/stagirovka/TlkPersonaChatRus/tolokapersonachat.txt",
-    "rubert_path": "/content/drive/MyDrive/stagirovka/models/rubert"
-    "gradient_accumulation_steps": 4
-    "apply_interaction": True
-    "matching_method": "CoBERT"
-    "aggregation_method": "max"
-    "lr": 2e-5
-    "warmup_steps": 0
-    "test_mode": False
-}
+with open('config.json', 'r') as config:
+    data_load_config  = json.loads(config.read())
 
 ###
 
