@@ -3,12 +3,12 @@
     "proc_data_path": "TlkPersonaChatRus/tolokapersonachat.txt",
     "rubert_path": "models/rubert"
     "gradient_accumulation_steps": 4
-    "apply_interaction": True
+    "apply_interaction": 1
     "matching_method": "CoBERT"
     "aggregation_method": "max"
     "lr": 2e-5
     "warmup_steps": 0
-    "test_mode": False
+    "test_mode": 0
     "context_len": 32
     "responce_len": 32
     "persona_len": 32
