@@ -56,7 +56,8 @@ def aggregate(model, aggregation_method, x, x_mask):
     assert x.dim() == 3 and x_mask.dim() == 2
     assert x.shape[:2] == x_mask.shape
     # batch_size, seq_len, emb_size = x.shape
-
+    if aggregation_method == "cls":
+        return x[:,0] # (batch_size, emb_size)
     if aggregation_method == "mean":
         return (x * x_mask.unsqueeze(-1)).sum(dim=1)/x_mask.sum(dim=-1, keepdim=True).clamp(min=1) # (batch_size, emb_size)
 
@@ -134,8 +135,6 @@ def dot_product_loss(batch_x_emb, batch_y_emb):
     # dot_products: [batch, batch]
     log_prob = torch.nn.functional.log_softmax(dot_products, dim=1)
     loss = torch.nn.functional.nll_loss(log_prob, targets)
-    print(targets)
-    print(log_prob.max(dim=1)[1])
     nb_ok = (log_prob.max(dim=1)[1] == targets).float().sum()
     return loss, nb_ok
 
@@ -145,16 +144,19 @@ def train_epoch(data_iter, models, optimizers, schedulers, gradient_accumulation
     epoch_loss = []
     ok = 0
     total = 0
-    print_every = 500
+    print_every = 100
     context_model, response_model, persona_model = models[0], models[0], models[0]
     for optimizer in optimizers:
         optimizer.zero_grad()
     for i, batch in enumerate(data_iter):
         ######
         x, y = batch
-        batch_context = x['context'].to(device)
-        batch_responce = x['responce'].to(device)
-        batch_persona = x['persona'].to(device)
+        # batch_context = x['context'].to(device)
+        # batch_responce = x['responce'].to(device)
+        # batch_persona = x['persona'].to(device)
+        batch_context = {k:x['context'][k].to(device) for k in x['context']}
+        batch_responce = {k:x['responce'][k].to(device) for k in x['responce']}
+        batch_persona = {k:x['persona'][k].to(device) for k in x['persona']}
         
         
         output_context = context_model(**batch_context)
@@ -194,6 +196,8 @@ def train_epoch(data_iter, models, optimizers, schedulers, gradient_accumulation
             # compute loss
             targets = torch.arange(batch_size, dtype=torch.long, device=device)
             loss = torch.nn.functional.cross_entropy(logits, targets)
+            # print('targets', targets.long())
+            # print('logits', logits.float().argmax(dim=1))
             num_ok = (targets.long() == logits.float().argmax(dim=1)).sum()
         else:
             batch_context_emb = output_context[0].mean(dim=1) # batch_context_emb: (batch_size, emb_size)
@@ -233,7 +237,7 @@ def train_epoch(data_iter, models, optimizers, schedulers, gradient_accumulation
                     optimizer.zero_grad()
         epoch_loss.append(loss.item())
 
-        if i%print_every == 0:
+        if  i and i%print_every == 0:
             # cprint("loss: ", np.mean(epoch_loss[-print_every:]))
             # cprint("accuracy: ", ok/total)
             print("loss: ", np.mean(epoch_loss[-print_every:]))
