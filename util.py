@@ -96,7 +96,7 @@ def compute_metrics_from_logits(logits, targets):
     MRR = MRR/batch_size
     return recall_k, MRR
 
-def logger(config, inp, metrics, path='logs', new=False):
+def logger(config, inp, path='logs', new=False):
     '''
     config - dict for dir name
     inp - {batch_n:int, train:float, val:float, *metrics:float}
