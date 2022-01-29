@@ -1,7 +1,7 @@
 {
     "raw_data_path": "TlkPersonaChatRus/dialogues.tsv",
     "proc_data_path": "TlkPersonaChatRus/tolokapersonachat.txt",
-    "rubert_path": "models/rubert"
+    "bert_path": "models/rubert"
     "gradient_accumulation_steps": 4
     "apply_interaction": 1
     "matching_method": "CoBERT"
