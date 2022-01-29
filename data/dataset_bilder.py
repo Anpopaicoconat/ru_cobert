@@ -40,4 +40,4 @@ def bild_data(raw, proc):
 with open('../config.json', 'r') as config:
     config  = json.loads(config.read())
                     
-bild_data(config['raw_data_path'], config['proc_data_path'])
+bild_data('TlkPersonaChatRus/dialogues.tsv', 'TlkPersonaChatRus/tolokapersonachat.txt') #config['raw_data_path'], config['proc_data_path']
