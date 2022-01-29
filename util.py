@@ -96,7 +96,7 @@ def compute_metrics_from_logits(logits, targets):
     MRR = MRR/batch_size
     return recall_k, MRR
 
-def logger(config, inp, path='logs', new=False):
+def logger(config, inp, name='new', path='logs', new=False):
     '''
     config - dict for dir name
     inp - {batch_n:int, train:float, val:float, *metrics:float}
@@ -104,7 +104,7 @@ def logger(config, inp, path='logs', new=False):
            best_metrics:{MAX(batch_n:int), MIN(train:float), MIN(val:float), *MAX(metrics:float)}}.json
     best_metrics not relised yet
     '''
-    dirname = os.path.join(path, str(config).replace('/', '\\'))
+    dirname = os.path.join(path, name)
     try:
         # history
         with open(os.path.join(dirname, 'history.json'), 'a') as history:
