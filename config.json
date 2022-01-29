@@ -1,16 +1,19 @@
 {
     "raw_data_path": "TlkPersonaChatRus/dialogues.tsv",
     "proc_data_path": "TlkPersonaChatRus/tolokapersonachat.txt",
-    "bert_path": "models/rubert"
-    "gradient_accumulation_steps": 4
-    "apply_interaction": 1
-    "matching_method": "CoBERT"
-    "aggregation_method": "max"
-    "lr": 2e-5
-    "warmup_steps": 0
-    "test_mode": 0
-    "context_len": 32
-    "responce_len": 32
-    "persona_len": 32
-    "batch_size": 32
+    "bert_path": "models/rubert",
+    "save_model_path":"",
+    "gradient_accumulation_steps": 4,
+    "apply_interaction": 0,
+    "matching_method": "CoBERT",
+    "aggregation_method": "cls",
+    "lr": 2e-5,
+    "warmup_steps": 0,
+    "test_mode": 0,
+    "context_len": 32,
+    "responce_len": 32,
+    "persona_len": 32,
+    "batch_size": 32,
+    "epochs": 10,
+    "split": 4
 }
