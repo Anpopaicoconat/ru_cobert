@@ -1,7 +1,7 @@
 {
-    "raw_data_path": "data/TlkPersonaChatRus/dialogues.tsv",
-    "proc_data_path": "data/TlkPersonaChatRus/tolokapersonachat.txt",
-    "bert_path": "models/rubert",
+    "raw_data_path": "data/personachat/test_both_original.txt",
+    "proc_data_path": "data/personachat/enpersonachat.txt",
+    "bert_path": "models/enbert",
     "save_model_path":"",
     "gradient_accumulation_steps": 4,
     "apply_interaction": 0,
