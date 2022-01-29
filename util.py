@@ -1,6 +1,9 @@
 import pickle
 import torch
 import numpy as np
+import os
+import csv
+import json
 
 def save_pickle(obj, path):
     with open(path, "wb") as f:
@@ -92,3 +95,35 @@ def compute_metrics_from_logits(logits, targets):
         MRR += 1/rank
     MRR = MRR/batch_size
     return recall_k, MRR
+
+def logger(config, inp, metrics, path='logs', new=False):
+    '''
+    config - dict for dir name
+    inp - {batch_n:int, train:float, val:float, *metrics:float}
+    log = {final_score: {batch_n:int, train:float, MIN(val:float), *metrics:float}, 
+           best_metrics:{MAX(batch_n:int), MIN(train:float), MIN(val:float), *MAX(metrics:float)}}.json
+    best_metrics not relised yet
+    '''
+    dirname = os.path.join(path, str(config))
+    if new:
+        # history
+        with open(os.path.join(dirname, 'history.json'), 'w') as history:
+            writer = csv.DictWriter(history, fieldnames=list(inp.keys()))
+            writer.writeheader()
+            writer.writerow(inp)
+        # log
+        with open(os.path.join(dirname, 'log.json'), 'w') as log:
+            out_log = {'final_score':inp, 'best_metrics':best_metrics}
+            json.dump(out_log, log)
+    else:
+        # history
+        with open(os.path.join(dirname, 'history.json'), 'a') as history:
+            writer = csv.DictWriter(history, fieldnames=list(inp.keys()))
+            writer.writerow(inp)
+        # log
+        with open(os.path.join(dirname, 'log.json'), 'r') as log:
+            out_log = json.load(log)
+        if out_log['final_score']['val'] > inp['val']:
+            out_log['final_score'] = inp
+        with open(os.path.join(dirname, 'log.json'), 'w') as log:
+            json.dump(out_log, log)
