@@ -126,5 +126,5 @@ def logger(config, inp, name='new', path='logs', new=False):
             writer.writerow(inp)
         # log
         with open(os.path.join(dirname, 'log.json'), 'w') as log:
-            out_log = {'final_score':inp, 'best_metrics':best_metrics}
+            out_log = {'final_score':inp, 'config':config}
             json.dump(out_log, log)
