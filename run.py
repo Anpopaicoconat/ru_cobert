@@ -7,6 +7,7 @@ import tqdm
 
 from cobert import match, aggregate, fuse, dot_product_loss, train_epoch, evaluate_epoch
 from dataset import PersonaChatTorchDataset, clf, tokenize
+from util import logger
 
 with open('config.json', 'r') as config:
     config  = json.loads(config.read())
@@ -102,4 +103,5 @@ for epoch in range(epochs):
                                                     amp=amp, apply_interaction=apply_interaction, 
                                                     matching_method=matching_method, 
                                                     aggregation_method=aggregation_method)
+        logger(config, {'epoch':epoch, 'train':train_loss, 'val':0, 'acc':train_acc})
         epoch_train_losses.append(train_loss)
