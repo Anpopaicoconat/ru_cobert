@@ -4,7 +4,7 @@ import torch
 import transformers
 import numpy as np
 
-from cobert import
+from cobert import match, aggregate, fuse, dot_product_loss, train_epoch, evaluate_epoch
 
 with open('config.json', 'r') as config:
     data_load_config  = json.loads(config.read())
