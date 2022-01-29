@@ -121,7 +121,7 @@ def logger(config, inp, name='new', path='logs', new=False):
             out_log['final_score'] = inp
         with open(os.path.join(dirname, 'log.json'), 'w') as log:
             json.dump(out_log, log)
-    except FileNotFoundError:
+    except BaseException:
         # history
         with open(os.path.join(dirname, 'history.json'), 'w') as history:
             writer = csv.DictWriter(history, fieldnames=list(inp.keys()))
