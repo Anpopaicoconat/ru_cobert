@@ -37,7 +37,7 @@ def bild_data(raw, proc):
                     persona = persona.replace('</span>', '').split('<br />')[:-1]
                     file.write(json.dumps({'context':context, 'responce':responce, 'persona':persona, 'label':1})+'\n')
 
-with open('./config.json', 'r') as config:
+with open('../config.json', 'r') as config:
     config  = json.loads(config.read())
                     
 bild_data(config['raw_data_path'], config['proc_data_path'])
