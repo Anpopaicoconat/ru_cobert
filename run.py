@@ -7,7 +7,7 @@ import numpy as np
 from cobert import match, aggregate, fuse, dot_product_loss, train_epoch, evaluate_epoch
 
 with open('config.json', 'r') as config:
-    data_load_config  = json.loads(config.read())
+    config  = json.loads(config.read())
 
 bert_config = transformers.BertConfig.from_pretrained(config['bert_path'])
 bert_tokenizer = transformers.BertTokenizer.from_pretrained(config['bert_path'], padding_side='left')
