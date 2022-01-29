@@ -1,31 +1,40 @@
-def load_toloka():
-    with open(data_load_config['proc_data_path'], 'r', encoding='utf-8') as data:
+import json
+import csv
+import torch
+import transformers
+import numpy as np
+
+def load_toloka(path):
+    with open(path, 'r', encoding='utf-8') as data:
         for line in data:
             yield json.loads(line)
 
-def tokenize_ru(inp, tokenizer=False, max_len=32, join_token=False):
-    pad_id = bert_tokenizer.pad_token_id
-    cls_id = bert_tokenizer.cls_token_id
-
+def tokenize(inp, tokenizer=False, max_len=32, join_token=False):
+    '''
+    tokenizer funk for PersonaChatTorchDataset and PersonaChatLazyDataset
+    '''
+    pad_id = tokenizer.pad_token_id
+    cls_id = tokenizer.cls_token_id
+    if tokenizer:
+        padding_side = tokenizer.padding_side
     if join_token:
-        out=[]
-        for x in inp:
-            out.append(join_token.join(x))
+        out=join_token.join(inp)
     else:
         out = inp 
-    out = tokenizer(out, padding=True, truncation=False, return_tensors="pt")
+    out = tokenizer(out, padding='max_length', max_length=max_len, truncation=False, return_tensors="pt")
+    if padding_side == 'left':
+        out = {k:out[k][:,-max_len:] for k in out}
+    elif padding_side == 'right':
+        out = {k:out[k][:,:max_len] for k in out}
+    else:
+        print('error')
     for k in out:
-        ad_size = max_len-out[k].shape[1]
-        if ad_size > 0:
-            pad_mat = torch.zeros((out[k].shape[0], ad_size))
-            out[k] = torch.cat((pad_mat, out[k]), dim=1)
-        out[k] = out[k][:, -max_len:]
         cls_padder = torch.ones_like(out[k][:,:1])*cls_id
         out[k][:,:1] = torch.where((out[k][:,:1]!=pad_id), cls_padder, out[k][:,:1])
         out[k] = out[k].type(torch.IntTensor)
     return out
 
-class TolokaLazyDataset():
+class PersonaChatLazyDataset():
     def __init__(self, path, tokenizer_func=False, tokenizer=False, batch_size=32, context_len=32, responce_len=32, persona_len=32):
         self.path = path
         self.batch_size = batch_size
@@ -73,31 +82,49 @@ class TolokaLazyDataset():
         return c
 
 def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, persona_len=32):
+    '''
+    collate_fn for PersonaChatTorchDataset.
+    inp json lines [{context:[],
+                    responce: str,
+                    persona:[]}...]
+    return batch {context:{inp_ids:[], token_type_ids:[], attention_mask:[]},
+                  responce:{inp_ids:[], token_type_ids:[], attention_mask:[]},
+                  persona:{inp_ids:[], token_type_ids:[], attention_mask:[]}}
+    shape b_size:max_len
+
+    return label [] shape b_size
+    '''
     batch = None
     for line in inp:
-        x = json.loads(line)
-        if batch is None:
-            batch = {k:[x[k]] for k in x}
-        else:
-            for k in x:
-                batch[k].append(x[k])
-    if tokenizer_func:
-        for k in batch:
-            if k == 'context':
-                max_len = context_len
-                join_token = tokenizer.end_of_masage_token
-            elif k == 'responce':
-                max_len = responce_len
-                join_token = False
-            elif k == 'persona':
-                max_len = persona_len
-                join_token = tokenizer.end_of_persona_sentence_token
+        line = json.loads(line)
+        if tokenizer_func:
+            for k in line:
+                if k == 'context':
+                    max_len = context_len
+                    join_token = tokenizer.end_of_masage_token
+                elif k == 'responce':
+                    max_len = responce_len
+                    join_token = False
+                elif k == 'persona':
+                    max_len = persona_len
+                    join_token = tokenizer.end_of_persona_sentence_token
+                else:
+                    line[k] = [line[k]]
+                    continue
+                tokens = tokenizer_func(line[k], tokenizer=tokenizer, max_len=max_len, join_token=join_token)
+                line[k] = {inp_type:tokens[inp_type][:32] for inp_type in tokens}
+            if batch is None:
+                batch = line
             else:
-                continue
-            batch[k] = tokenizer_func(batch[k], tokenizer=tokenizer, max_len=max_len, join_token=join_token)
+                for k in line:
+                    if k == 'label':
+                        batch[k]+=line[k]
+                    else:
+                        for inp_type in line[k]:
+                            batch[k][inp_type] = torch.cat((batch[k][inp_type], (line[k][inp_type])), 0)
     return batch, batch.pop('label')
 
-class TolokaTorchDataset(torch.utils.data.Dataset):
+class PersonaChatTorchDataset(torch.utils.data.Dataset):
     def __init__(self, path): #, tokenizer_func=False, tokenizer=False, batch_size=32, context_len=32, responce_len=32, persona_len=32
         with open(path, 'r', encoding='utf-8') as data:
             self.data = data.readlines()
