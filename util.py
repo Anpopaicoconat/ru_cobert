@@ -104,7 +104,7 @@ def logger(config, inp, path='logs', new=False):
            best_metrics:{MAX(batch_n:int), MIN(train:float), MIN(val:float), *MAX(metrics:float)}}.json
     best_metrics not relised yet
     '''
-    dirname = os.path.join(path, str(config))
+    dirname = os.path.join(path, str(config).replace('/', '\\'))
     try:
         # history
         with open(os.path.join(dirname, 'history.json'), 'a') as history:
