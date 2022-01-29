@@ -1,2 +1,2 @@
-wget https://tlk.s3.yandex.net/dataset/TlkPersonaChatRus.zip
 unzip TlkPersonaChatRus.zip
+python3 data_bilder.py
