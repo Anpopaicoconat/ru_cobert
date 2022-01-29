@@ -240,3 +240,118 @@ def train_epoch(data_iter, models, optimizers, schedulers, gradient_accumulation
 
     acc = ok/total
     return np.mean(epoch_loss), (acc, 0, 0)
+
+def evaluate_epoch(data_iter, models, gradient_accumulation_steps, device, epoch, \
+    apply_interaction, matching_method, aggregation_method):
+    epoch_loss = []
+    ok = 0
+    total = 0
+    recall = []
+    MRR = []
+    print_every = 100
+    context_model, response_model, persona_model = models[0], models[0], models[0]
+    
+    for batch_idx, batch in enumerate(data_iter):
+        x, y = batch
+        batch_context = x['context'].to(device)
+        batch_responce = x['responce'].to(device)
+        batch_persona = x['persona'].to(device)
+        
+        # get context embeddings in chunks due to memory constraint
+        batch_size = batch_context['input_ids'].shape[0]
+        chunk_size = 20
+        num_chunks = math.ceil(batch_size/chunk_size)
+
+        if apply_interaction:
+            batch_context_mask = batch_context['attention_mask'].float()
+            batch_responce_mask = batch_responce['attention_mask'].float()
+            
+            batch_context_emb = []
+            batch_context_pooled_emb = []
+            with torch.no_grad():
+                for i in range(num_chunks):
+                    mini_batch_context = {
+                        "input_ids": batch_context['input_ids'][i*chunk_size: (i+1)*chunk_size], 
+                        "attention_mask": batch_context['attention_mask'][i*chunk_size: (i+1)*chunk_size], 
+                        "token_type_ids": batch_context['token_type_ids'][i*chunk_size: (i+1)*chunk_size]
+                        }
+                    mini_output_context = context_model(**mini_batch_context)
+                    batch_context_emb.append(mini_output_context[0]) # [(chunk_size, seq_len, emb_size), ...]
+                    batch_context_pooled_emb.append(mini_output_context[1])
+                batch_context_emb = torch.cat(batch_context_emb, dim=0) # (batch_size, seq_len, emb_size)
+                batch_context_pooled_emb = torch.cat(batch_context_pooled_emb, dim=0)
+                emb_size = batch_context_emb.shape[-1]
+
+            batch_persona_mask = batch_persona['attention_mask'].float()
+            batch_persona_emb = []
+            batch_persona_pooled_emb = []
+            with torch.no_grad():
+                for i in range(num_chunks):
+                    mini_batch_persona = {
+                        "input_ids": batch_persona['input_ids'][i*chunk_size: (i+1)*chunk_size], 
+                        "attention_mask": batch_persona['attention_mask'][i*chunk_size: (i+1)*chunk_size], 
+                        "token_type_ids": batch_persona['token_type_ids'][i*chunk_size: (i+1)*chunk_size]
+                        }
+                    mini_output_persona = persona_model(**mini_batch_persona)
+
+                    # [(chunk_size, emb_size), ...]
+                    batch_persona_emb.append(mini_output_persona[0])
+                    batch_persona_pooled_emb.append(mini_output_persona[1])
+
+                batch_persona_emb = torch.cat(batch_persona_emb, dim=0)
+                batch_persona_pooled_emb = torch.cat(batch_persona_pooled_emb, dim=0)
+
+        with torch.no_grad():
+            output_responce = response_model(**batch_responce)
+            batch_responce_emb = output_responce[0]
+        batch_size, sent_len, emb_size = batch_responce_emb.shape
+
+        # interaction
+        # context-response attention
+        num_candidates = batch_size
+        
+        with torch.no_grad():
+            # evaluate per example
+            logits = []
+            for i in range(batch_size):
+                context_emb = batch_context_emb[i:i+1].repeat_interleave(num_candidates, dim=0) # (num_candidates, context_len, emb_size)
+                context_mask = batch_context_mask[i:i+1].repeat_interleave(num_candidates, dim=0) # (batch_size*num_candidates, context_len)
+                persona_emb, persona_mask = None, None
+                persona_emb = batch_persona_emb[i:i+1].repeat_interleave(num_candidates, dim=0)
+                persona_mask = batch_persona_mask[i:i+1].repeat_interleave(num_candidates, dim=0)
+
+                logits_single = fuse(context_model, matching_method, aggregation_method, \
+                    context_emb, batch_responce_emb, persona_emb, context_mask, batch_responce_mask, persona_mask, 1, num_candidates).reshape(-1)
+                
+                logits.append(logits_single)
+            logits = torch.stack(logits, dim=0)
+            
+            # compute loss
+            targets = torch.arange(batch_size, dtype=torch.long, device=batch_context['input_ids'].device)
+            loss = torch.nn.functional.cross_entropy(logits, targets)
+        # print('targets', targets.long())
+        # print('logits', logits.float().argmax(dim=1))
+        num_ok = (targets.long() == logits.float().argmax(dim=1)).sum()
+        valid_recall, valid_MRR = compute_metrics_from_logits(logits, targets)
+        
+        ok += num_ok.item()
+        total += batch_context['input_ids'].shape[0]
+
+        # compute valid recall
+        recall.append(valid_recall)
+        MRR.append(valid_MRR)
+
+        if gradient_accumulation_steps > 1:
+            loss = loss / gradient_accumulation_steps
+        epoch_loss.append(loss.item())
+
+        if batch_idx and batch_idx%print_every == 0:
+            print("loss: ", np.mean(epoch_loss[-print_every:]))
+            print("valid recall: ", np.mean(recall[-print_every:], axis=0))
+            print("valid MRR: ", np.mean(MRR[-print_every:], axis=0))
+
+    acc = ok/total
+    # compute recall for validation dataset
+    recall = np.mean(recall, axis=0)
+    MRR = np.mean(MRR)
+    return np.mean(epoch_loss), (acc, recall, MRR)
