@@ -5,7 +5,7 @@ import transformers
 import numpy as np
 
 from cobert import match, aggregate, fuse, dot_product_loss, train_epoch, evaluate_epoch
-from data import PersonaChatTorchDataset'
+from data import PersonaChatTorchDataset
 
 with open('config.json', 'r') as config:
     config  = json.loads(config.read())
