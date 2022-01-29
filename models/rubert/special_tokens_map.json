@@ -1,0 +1,1 @@
+{"unk_token": "[UNK]", "sep_token": "[SEP]", "pad_token": "[PAD]", "cls_token": "[CLS]", "mask_token": "[MASK]", "end_of_masage_token": "[EOM]", "end_of_persona_sentence_token": "[EOPS]"}
