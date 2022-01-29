@@ -1,2 +1,2 @@
 unzip TlkPersonaChatRus.zip
-python3 data_bilder.py
+python3 dataset_bilder.py
