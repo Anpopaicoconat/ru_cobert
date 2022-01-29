@@ -105,17 +105,7 @@ def logger(config, inp, path='logs', new=False):
     best_metrics not relised yet
     '''
     dirname = os.path.join(path, str(config))
-    if new:
-        # history
-        with open(os.path.join(dirname, 'history.json'), 'w') as history:
-            writer = csv.DictWriter(history, fieldnames=list(inp.keys()))
-            writer.writeheader()
-            writer.writerow(inp)
-        # log
-        with open(os.path.join(dirname, 'log.json'), 'w') as log:
-            out_log = {'final_score':inp, 'best_metrics':best_metrics}
-            json.dump(out_log, log)
-    else:
+    try:
         # history
         with open(os.path.join(dirname, 'history.json'), 'a') as history:
             writer = csv.DictWriter(history, fieldnames=list(inp.keys()))
@@ -126,4 +116,14 @@ def logger(config, inp, path='logs', new=False):
         if out_log['final_score']['val'] > inp['val']:
             out_log['final_score'] = inp
         with open(os.path.join(dirname, 'log.json'), 'w') as log:
+            json.dump(out_log, log)
+    except FileNotFoundError:
+        # history
+        with open(os.path.join(dirname, 'history.json'), 'w') as history:
+            writer = csv.DictWriter(history, fieldnames=list(inp.keys()))
+            writer.writeheader()
+            writer.writerow(inp)
+        # log
+        with open(os.path.join(dirname, 'log.json'), 'w') as log:
+            out_log = {'final_score':inp, 'best_metrics':best_metrics}
             json.dump(out_log, log)
