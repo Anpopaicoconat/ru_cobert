@@ -6,7 +6,7 @@ import numpy as np
 import tqdm
 
 from cobert import match, aggregate, fuse, dot_product_loss, train_epoch, evaluate_epoch
-from dataset import PersonaChatTorchDataset
+from dataset import PersonaChatTorchDataset, clf, tokenize
 
 with open('config.json', 'r') as config:
     config  = json.loads(config.read())
