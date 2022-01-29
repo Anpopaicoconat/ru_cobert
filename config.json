@@ -1,6 +1,6 @@
 {
-    "raw_data_path": "TlkPersonaChatRus/dialogues.tsv",
-    "proc_data_path": "TlkPersonaChatRus/tolokapersonachat.txt",
+    "raw_data_path": "data/TlkPersonaChatRus/dialogues.tsv",
+    "proc_data_path": "data/TlkPersonaChatRus/tolokapersonachat.txt",
     "bert_path": "models/rubert",
     "save_model_path":"",
     "gradient_accumulation_steps": 4,
