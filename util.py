@@ -105,7 +105,10 @@ def logger(config, inp, name='new', path='logs', new=False):
     best_metrics not relised yet
     '''
     dirname = os.path.join(path, name)
-    os.mkdir(dirname)
+    try:
+        os.mkdir(dirname)
+    except FileExistsError:
+        pass
     try:
         # history
         with open(os.path.join(dirname, 'history.json'), 'a') as history:
