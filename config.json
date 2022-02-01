@@ -6,7 +6,7 @@
     "gradient_accumulation_steps": 4,
     "apply_interaction": 0,
     "matching_method": "CoBERT",
-    "aggregation_method": "mean",
+    "aggregation_method": "meanmax",
     "lr": 2e-5,
     "warmup_steps": 0,
     "test_mode": 0,
