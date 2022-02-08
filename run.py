@@ -20,7 +20,7 @@ save_model_path = config['save_model_path']
 
 gradient_accumulation_steps = config['gradient_accumulation_steps'] 
 apply_interaction = config['apply_interaction'] 
-matching_method = config['apply_interaction']
+matching_method = config['matching_method']
 aggregation_method = config['aggregation_method']
 lr =  config['lr'] 
 warmup_steps = config['warmup_steps']
