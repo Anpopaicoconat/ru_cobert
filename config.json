@@ -4,7 +4,7 @@
     "bert_path": "models/rubert",
     "save_model_path":"",
     "gradient_accumulation_steps": 4,
-    "apply_interaction": 0,
+    "apply_interaction": 1,
     "matching_method": "CoBERT",
     "aggregation_method": "max",
     "lr": 2e-5,
