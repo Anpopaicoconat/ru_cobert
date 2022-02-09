@@ -87,8 +87,8 @@ epoch_valid_recalls = []
 epoch_valid_MRRs = []
 best_model_statedict = {}
 
-proc_data_path_list = ["/content/drive/MyDrive/stagirovka/personachat/enpersonachat.txt", "/content/drive/MyDrive/stagirovka/TlkPersonaChatRus/tolokapersonachat.txt"]
-bert_path_list = ["/content/drive/MyDrive/stagirovka/models/enbert", "/content/drive/MyDrive/stagirovka/models/rubert"]
+proc_data_path_list = ["data/personachat/enpersonachat.txt", "data/TlkPersonaChatRus/tolokapersonachat.txt"]
+bert_path_list = ["models/enbert", "models/rubert"]
 
 for apply_interaction in range(1):
     print('apply_interaction': apply_interaction)
