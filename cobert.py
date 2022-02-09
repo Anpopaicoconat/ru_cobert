@@ -178,7 +178,7 @@ def train_epoch(data_iter, models, has_persona, optimizers, schedulers, gradient
         # batch_x = {"input_ids": batch[0], "attention_mask": batch[1], "token_type_ids": batch[2]}
         # batch_y = {"input_ids": batch[3], "attention_mask": batch[4], "token_type_ids": batch[5]}
         # batch_persona = {"input_ids": batch[6], "attention_mask": batch[7], "token_type_ids": batch[8]}
-
+        print(batch_x['input_ids'][0])
 
         output_x = context_model(**batch_x)
         output_y = response_model(**batch_y)
