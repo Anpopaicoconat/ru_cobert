@@ -12,10 +12,6 @@ from util import logger
 with open('config.json', 'r') as config:
     config  = json.loads(config.read())
 
-bert_config = transformers.BertConfig.from_pretrained(config['bert_path'])
-bert_tokenizer = transformers.BertTokenizer.from_pretrained(config['bert_path'], padding_side='left')
-bert_model = transformers.BertModel(bert_config).from_pretrained(config['bert_path'])
-models = [bert_model]
 save_model_path = config['save_model_path']
 
 gradient_accumulation_steps = config['gradient_accumulation_steps'] 
@@ -49,7 +45,12 @@ for apply_interaction in range(1):
     print('apply_interaction', apply_interaction)
     for proc_data, bert_path in zip(proc_data_path_list, bert_path_list):
         log_path = bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) + '.csv'
-        data = PersonaChatTorchDataset(config['proc_data_path'])
+        print(log_path)
+        bert_config = transformers.BertConfig.from_pretrained(bert_path)
+        bert_tokenizer = transformers.BertTokenizer.from_pretrained(bert_path, padding_side='left')
+        bert_model = transformers.BertModel(bert_config).from_pretrained(bert_path)
+        models = [bert_model]
+        data = PersonaChatTorchDataset(proc_data)
         split = len(data)//config['split']
         train, val = torch.utils.data.random_split(data, [len(data)-split, split])
         train = torch.utils.data.DataLoader(train, batch_size=32,
