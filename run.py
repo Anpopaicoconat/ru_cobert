@@ -100,49 +100,49 @@ for proc_data, bert_path in zip(proc_data_path_list, bert_path_list):
                 best_model_statedict = {}
 
 
-        with open(log_path, 'w') as log:
-            writer = csv.DictWriter(log, fieldnames=['epoch', 'train_loss', 'valid_loss', 'train_acc', 'valid_acc', 'valid_recall', 'valid_MRR'], delimiter=',', quotechar='"')
-            writer.writeheader()
-            for epoch in range(epochs):
-                print("Epoch", epoch+1)
-                # training
-                for model in models:
-                    model.train()
-                    
-                train = tqdm.tqdm(train, desc="Iteration")
-                train_loss, (train_acc, _, _) = train_epoch(data_iter=train, 
-                                                            models=models, has_persona=has_persona, optimizers=optimizers, 
-                                                            schedulers=schedulers, 
-                                                            gradient_accumulation_steps=gradient_accumulation_steps, 
-                                                            device=device, fp16=fp16, 
-                                                            amp=amp, apply_interaction=apply_interaction, 
-                                                            matching_method=matching_method, 
-                                                            aggregation_method=aggregation_method)
-                epoch_train_losses.append(train_loss)
+                with open(log_path, 'w') as log:
+                    writer = csv.DictWriter(log, fieldnames=['epoch', 'train_loss', 'valid_loss', 'train_acc', 'valid_acc', 'valid_recall', 'valid_MRR'], delimiter=',', quotechar='"')
+                    writer.writeheader()
+                    for epoch in range(epochs):
+                        print("Epoch", epoch+1)
+                        # training
+                        for model in models:
+                            model.train()
 
-                # evaluation
-                for model in models:
-                    model.eval()
-                valid_iterator = tqdm.tqdm(val, desc="Iteration")
-                valid_loss, (valid_acc, valid_recall, valid_MRR) = evaluate_epoch(data_iter=val, models=models,
-                                                                                    has_persona=has_persona,
-                                                                                    gradient_accumulation_steps=gradient_accumulation_steps, 
-                                                                                    device=device, epoch=epoch, apply_interaction=apply_interaction, 
-                                                                                    matching_method=matching_method, aggregation_method=aggregation_method)
+                        train = tqdm.tqdm(train, desc="Iteration")
+                        train_loss, (train_acc, _, _) = train_epoch(data_iter=train, 
+                                                                    models=models, has_persona=has_persona, optimizers=optimizers, 
+                                                                    schedulers=schedulers, 
+                                                                    gradient_accumulation_steps=gradient_accumulation_steps, 
+                                                                    device=device, fp16=fp16, 
+                                                                    amp=amp, apply_interaction=apply_interaction, 
+                                                                    matching_method=matching_method, 
+                                                                    aggregation_method=aggregation_method)
+                        epoch_train_losses.append(train_loss)
 
-                print("Epoch {0}: train loss: {1:.4f}, valid loss: {2:.4f}, train_acc: {3:.4f}, valid acc: {4:.4f}, valid recall: {5}, valid_MRR: {6:.4f}"
-                    .format(epoch+1, train_loss, valid_loss, train_acc, valid_acc, valid_recall, valid_MRR))
-                writer.writerow({'epoch':epoch+1, 'train_loss':train_loss, 'valid_loss': valid_loss, 'train_acc':train_acc, 'valid_acc':valid_acc, 'valid_recall':valid_recall, 'valid_MRR':valid_MRR})
-                epoch_valid_losses.append(valid_loss)
-                epoch_valid_accs.append(valid_acc)
-                epoch_valid_recalls.append(valid_recall)
-                epoch_valid_MRRs.append(valid_MRR)
+                        # evaluation
+                        for model in models:
+                            model.eval()
+                        valid_iterator = tqdm.tqdm(val, desc="Iteration")
+                        valid_loss, (valid_acc, valid_recall, valid_MRR) = evaluate_epoch(data_iter=val, models=models,
+                                                                                            has_persona=has_persona,
+                                                                                            gradient_accumulation_steps=gradient_accumulation_steps, 
+                                                                                            device=device, epoch=epoch, apply_interaction=apply_interaction, 
+                                                                                            matching_method=matching_method, aggregation_method=aggregation_method)
 
-                if save_model_path != "":
-                    if epoch == 0:
-                        for k, v in models[0].state_dict().items():
-                            best_model_statedict[k] = v.cpu()
-                    else:
-                        if epoch_valid_recalls[-1][0] == max([recall1 for recall1, _, _ in epoch_valid_recalls]):
-                            for k, v in models[0].state_dict().items():
-                                best_model_statedict[k] = v.cpu()
+                        print("Epoch {0}: train loss: {1:.4f}, valid loss: {2:.4f}, train_acc: {3:.4f}, valid acc: {4:.4f}, valid recall: {5}, valid_MRR: {6:.4f}"
+                            .format(epoch+1, train_loss, valid_loss, train_acc, valid_acc, valid_recall, valid_MRR))
+                        writer.writerow({'epoch':epoch+1, 'train_loss':train_loss, 'valid_loss': valid_loss, 'train_acc':train_acc, 'valid_acc':valid_acc, 'valid_recall':valid_recall, 'valid_MRR':valid_MRR})
+                        epoch_valid_losses.append(valid_loss)
+                        epoch_valid_accs.append(valid_acc)
+                        epoch_valid_recalls.append(valid_recall)
+                        epoch_valid_MRRs.append(valid_MRR)
+
+                        if save_model_path != "":
+                            if epoch == 0:
+                                for k, v in models[0].state_dict().items():
+                                    best_model_statedict[k] = v.cpu()
+                            else:
+                                if epoch_valid_recalls[-1][0] == max([recall1 for recall1, _, _ in epoch_valid_recalls]):
+                                    for k, v in models[0].state_dict().items():
+                                        best_model_statedict[k] = v.cpu()
