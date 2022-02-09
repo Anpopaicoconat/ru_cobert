@@ -41,52 +41,6 @@ optimizers = []
 schedulers = []
 weight_decay = 0
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-data = PersonaChatTorchDataset(config['proc_data_path'])
-split = len(data)//config['split']
-train, val = torch.utils.data.random_split(data, [len(data)-split, split])
-train = torch.utils.data.DataLoader(train, batch_size=32,
-                        shuffle=True, num_workers=0, 
-                        collate_fn=lambda x: clf(x, tokenizer_func=tokenize, 
-                                                 tokenizer=bert_tokenizer, 
-                                                 context_len=context_len, 
-                                                 responce_len=responce_len, 
-                                                 persona_len=persona_len))
-val = torch.utils.data.DataLoader(val, batch_size=32,
-                        shuffle=True, num_workers=0, 
-                        collate_fn=lambda x: clf(x, tokenizer_func=tokenize, 
-                                                 tokenizer=bert_tokenizer, 
-                                                 context_len=context_len, 
-                                                 responce_len=responce_len, 
-                                                 persona_len=persona_len))
-print(len(train), len(val))
-
-
-t_total = len(train) // gradient_accumulation_steps * 1
-for i, model in enumerate(models):
-    optimizer_grouped_parameters = [
-        {
-            "params": [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
-            "weight_decay": weight_decay,
-        },
-        {"params": [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], "weight_decay": 0.0},
-    ]
-    optimizer = transformers.AdamW(optimizer_grouped_parameters, lr=lr, eps=1e-8)
-
-
-    optimizers.append(optimizer)
-    
-    if not test_mode:
-        scheduler = transformers.get_linear_schedule_with_warmup(
-            optimizer, num_warmup_steps=warmup_steps, num_training_steps=t_total
-        )
-        schedulers.append(scheduler)
-
-epoch_train_losses = []
-epoch_valid_losses = []
-epoch_valid_accs = []
-epoch_valid_recalls = []
-epoch_valid_MRRs = []
-best_model_statedict = {}
 
 proc_data_path_list = ["data/personachat/enpersonachat.txt", "data/TlkPersonaChatRus/tolokapersonachat.txt"]
 bert_path_list = ["models/enbert", "models/rubert"]
@@ -95,6 +49,53 @@ for apply_interaction in range(1):
     print('apply_interaction', apply_interaction)
     for proc_data, bert_path in zip(proc_data_path_list, bert_path_list):
         log_path = bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) + '.csv'
+        data = PersonaChatTorchDataset(config['proc_data_path'])
+        split = len(data)//config['split']
+        train, val = torch.utils.data.random_split(data, [len(data)-split, split])
+        train = torch.utils.data.DataLoader(train, batch_size=32,
+                                shuffle=True, num_workers=0, 
+                                collate_fn=lambda x: clf(x, tokenizer_func=tokenize, 
+                                                         tokenizer=bert_tokenizer, 
+                                                         context_len=context_len, 
+                                                         responce_len=responce_len, 
+                                                         persona_len=persona_len))
+        val = torch.utils.data.DataLoader(val, batch_size=32,
+                                shuffle=True, num_workers=0, 
+                                collate_fn=lambda x: clf(x, tokenizer_func=tokenize, 
+                                                         tokenizer=bert_tokenizer, 
+                                                         context_len=context_len, 
+                                                         responce_len=responce_len, 
+                                                         persona_len=persona_len))
+        print(len(train), len(val))
+
+
+        t_total = len(train) // gradient_accumulation_steps * 1
+        for i, model in enumerate(models):
+            optimizer_grouped_parameters = [
+                {
+                    "params": [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
+                    "weight_decay": weight_decay,
+                },
+                {"params": [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], "weight_decay": 0.0},
+            ]
+            optimizer = transformers.AdamW(optimizer_grouped_parameters, lr=lr, eps=1e-8)
+
+
+            optimizers.append(optimizer)
+
+            if not test_mode:
+                scheduler = transformers.get_linear_schedule_with_warmup(
+                    optimizer, num_warmup_steps=warmup_steps, num_training_steps=t_total
+                )
+                schedulers.append(scheduler)
+
+        epoch_train_losses = []
+        epoch_valid_losses = []
+        epoch_valid_accs = []
+        epoch_valid_recalls = []
+        epoch_valid_MRRs = []
+        best_model_statedict = {}
+
         with open(log_path, 'w') as log:
             writer = csv.DictWriter(log, fieldnames=['epoch', 'train_loss', 'valid_loss', 'train_acc', 'valid_acc', 'valid_recall', 'valid_MRR'], delimiter=',', quotechar='"')
             writer.writeheader()
