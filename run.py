@@ -25,6 +25,7 @@ aggregation_method = config['aggregation_method']
 lr =  config['lr'] 
 warmup_steps = config['warmup_steps']
 test_mode = config['test_mode']
+has_persona = config['has_persona']
 
 context_len = config['context_len']
 responce_len = config['responce_len']
