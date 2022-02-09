@@ -91,7 +91,7 @@ proc_data_path_list = ["data/personachat/enpersonachat.txt", "data/TlkPersonaCha
 bert_path_list = ["models/enbert", "models/rubert"]
 
 for apply_interaction in range(1):
-    print('apply_interaction': apply_interaction)
+    print('apply_interaction', apply_interaction)
     for proc_data, bert_path in zip(proc_data_path_list, bert_path_list):
         log_path = bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) + '.csv'
         with open(log_path, 'w') as log:
