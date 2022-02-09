@@ -43,6 +43,8 @@ bert_path_list = ["models/enbert", "models/rubert"]
 
 for proc_data, bert_path in zip(proc_data_path_list, bert_path_list):
     for apply_interaction in range(1):
+        if apply_interaction == 0:
+            continue 
         for aggregation_method in ['max', 'mean', 'meanmax', 'cls']:
             for padding_side in ['left', 'right']:
                 log_path = 'logs/' + bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) \
