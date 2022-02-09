@@ -75,6 +75,8 @@ def aggregate(model, aggregation_method, x, x_mask):
     if aggregation_method == "mean_max":
         return torch.cat([(x * x_mask.unsqueeze(-1)).sum(dim=1)/x_mask.sum(dim=-1, keepdim=True).clamp(min=1), \
             x.masked_fill(x_mask.unsqueeze(-1)==0, -5e4).max(dim=1)[0]], dim=-1) # (batch_size, 2*emb_size)
+    if aggregation_method == "cls":
+        return x[:,0] # (batch_size, emb_size)
 
 
 def fuse(model, matching_method, aggregation_method, batch_x_emb, batch_y_emb, batch_persona_emb, \
@@ -178,7 +180,8 @@ def train_epoch(data_iter, models, has_persona, optimizers, schedulers, gradient
         # batch_x = {"input_ids": batch[0], "attention_mask": batch[1], "token_type_ids": batch[2]}
         # batch_y = {"input_ids": batch[3], "attention_mask": batch[4], "token_type_ids": batch[5]}
         # batch_persona = {"input_ids": batch[6], "attention_mask": batch[7], "token_type_ids": batch[8]}
-        print(batch_x['input_ids'][0])
+        if i == 0:
+            print(batch_x['input_ids'][0])
 
         output_x = context_model(**batch_x)
         output_y = response_model(**batch_y)
