@@ -42,7 +42,7 @@ proc_data_path_list = ["data/personachat/enpersonachat.txt", "data/TlkPersonaCha
 bert_path_list = ["models/enbert", "models/rubert"]
 
 for proc_data, bert_path in zip(proc_data_path_list, bert_path_list):
-    for apply_interaction in range(1):
+    for apply_interaction in range(2):
         if apply_interaction == 0:
             print(apply_interaction)
             continue 
