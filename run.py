@@ -49,7 +49,7 @@ for proc_data, bert_path in zip(proc_data_path_list, bert_path_list):
                 log_path = 'logs/' + bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) \
                 + '_' + aggregation_method + '_' + padding_side + '.csv'
                 print(tuple(os.walk('logs/')))
-                if log_path in tuple(os.walk('logs/'))[1]:
+                if log_path in tuple(os.walk('logs/'))[0][1]:
                     print('skeep', log_path)
                     continue
 
