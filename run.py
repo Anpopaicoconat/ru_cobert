@@ -4,6 +4,7 @@ import torch
 import transformers
 import numpy as np
 import tqdm
+import os
 
 from cobert import match, aggregate, fuse, dot_product_loss, train_epoch, evaluate_epoch
 from dataset import PersonaChatTorchDataset, clf, tokenize
@@ -42,16 +43,16 @@ proc_data_path_list = ["data/personachat/enpersonachat.txt", "data/TlkPersonaCha
 bert_path_list = ["models/enbert", "models/rubert"]
 
 for proc_data, bert_path in zip(proc_data_path_list, bert_path_list):
-    if proc_data == 'data/personachat/enpersonachat.txt':
-        continue
     for apply_interaction in range(2):
-        if apply_interaction == 0:
-            print(apply_interaction)
-            #continue 
         for aggregation_method in ['max', 'mean', 'meanmax', 'cls']:
             for padding_side in ['left', 'right']:
                 log_path = 'logs/' + bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) \
                 + '_' + aggregation_method + '_' + padding_side + '.csv'
+                
+                if log_path in walk('logs/')[2]:
+                    print('skeep', log_path)
+                    continue
+
                 print(log_path)
                 bert_config = transformers.BertConfig.from_pretrained(bert_path)
                 bert_tokenizer = transformers.BertTokenizer.from_pretrained(bert_path, padding_side=padding_side)
