@@ -43,6 +43,8 @@ proc_data_path_list = ["data/personachat/enpersonachat.txt", "data/TlkPersonaCha
 bert_path_list = ["models/enbert", "models/rubert"]
 
 for proc_data, bert_path in zip(proc_data_path_list, bert_path_list):
+    if proc_data == "data/personachat/enpersonachat.txt":
+        continue
     for apply_interaction in range(2):
         for aggregation_method in ['max', 'mean', 'meanmax', 'cls']:
             for padding_side in ['left', 'right']:
