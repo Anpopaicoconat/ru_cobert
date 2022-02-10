@@ -52,7 +52,7 @@ for proc_data, bert_path in zip(proc_data_path_list, bert_path_list):
                 if log_path in tuple(os.walk('logs/'))[0][1]:
                     print('skeep', log_path)
                     continue
-                log_path 'logs/' + log_path
+                log_path = 'logs/' + log_path
                 print(log_path)
                 bert_config = transformers.BertConfig.from_pretrained(bert_path)
                 bert_tokenizer = transformers.BertTokenizer.from_pretrained(bert_path, padding_side=padding_side)
