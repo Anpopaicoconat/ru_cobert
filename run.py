@@ -46,13 +46,13 @@ for proc_data, bert_path in zip(proc_data_path_list, bert_path_list):
     for apply_interaction in range(2):
         for aggregation_method in ['max', 'mean', 'meanmax', 'cls']:
             for padding_side in ['left', 'right']:
-                log_path = 'logs/' + bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) \
+                log_path = bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) \
                 + '_' + aggregation_method + '_' + padding_side + '.csv'
                 print(tuple(os.walk('logs/')))
                 if log_path in tuple(os.walk('logs/'))[0][1]:
                     print('skeep', log_path)
                     continue
-
+                log_path 'logs/' + log_path
                 print(log_path)
                 bert_config = transformers.BertConfig.from_pretrained(bert_path)
                 bert_tokenizer = transformers.BertTokenizer.from_pretrained(bert_path, padding_side=padding_side)
