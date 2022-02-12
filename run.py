@@ -54,7 +54,7 @@ for proc_data, bert_path in zip(proc_data_path_list, bert_path_list):
                     print('skeep', log_path)
                     continue
                 else:
-                    print(log_path) 
+                    print('logs/'+log_path) 
                 print(log_path)
                 bert_config = transformers.BertConfig.from_pretrained(bert_path)
                 bert_tokenizer = transformers.BertTokenizer.from_pretrained(bert_path, padding_side=padding_side)
