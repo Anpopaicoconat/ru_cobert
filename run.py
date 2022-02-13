@@ -50,7 +50,7 @@ for proc_data, bert_path in zip(proc_data_path_list, bert_path_list):
             for padding_side in ['left', 'right']:
                 log_path = bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) \
                 + '_' + aggregation_method + '_' + padding_side + '.csv'
-                if log_path in tuple(os.walk('logs/'))[0][2]:
+                if log_path in tuple(os.walk('logs/'))[0][2] or log_path == 'rubert_tolokapersonachat_interaction1_meanmax_left.csv':
                     print('skeep', log_path)
                     continue
                 else:
