@@ -46,11 +46,11 @@ for proc_data, bert_path in zip(proc_data_path_list, bert_path_list):
     if proc_data == "data/personachat/enpersonachat.txt":
         continue
     for apply_interaction in range(1, 2):
-        for aggregation_method in ['max', 'mean', 'meanmax', 'cls']: #'max', 'mean', 'meanmax', 
+        for aggregation_method in ['max', 'mean', 'cls']: #'max', 'mean', 'meanmax', 
             for padding_side in ['left', 'right']:
                 log_path = bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) \
                 + '_' + aggregation_method + '_' + padding_side + '.csv'
-                if log_path in tuple(os.walk('logs/'))[0][2] or log_path == 'rubert_tolokapersonachat_interaction1_meanmax_left.csv':
+                if log_path in tuple(os.walk('logs/'))[0][2]:
                     print('skeep', log_path)
                     continue
                 else:
