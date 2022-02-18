@@ -77,6 +77,8 @@ def aggregate(model, aggregation_method, x, x_mask):
             x.masked_fill(x_mask.unsqueeze(-1)==0, -5e4).max(dim=1)[0]], dim=-1) # (batch_size, 2*emb_size)
     if aggregation_method == "cls":
         return x[:,0] # (batch_size, emb_size)
+    if aggregation_method == "cls_gpt":
+        return x[:,-1] # (batch_size, emb_size)
 
 
 def fuse(model, matching_method, aggregation_method, batch_x_emb, batch_y_emb, batch_persona_emb, \
