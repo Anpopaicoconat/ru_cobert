@@ -18,5 +18,5 @@
     "epochs": 10,
     "split": 4,
     "has_persona": 1,
-    "log_path": "gpt.csv"
+    "log_path": "logs/gpt.csv"
 }
