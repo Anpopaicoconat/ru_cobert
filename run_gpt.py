@@ -75,7 +75,7 @@ print(len(train), len(val))
 t_total = len(train) // gradient_accumulation_steps * 1
 
 for i, model in enumerate(models):
-    UNFREEZE_LAST_N = 8
+    UNFREEZE_LAST_N = 1
     for param in list(model.parameters())[:-1]:
         param.requires_grad = False
     for i, m in enumerate(model.h):        
