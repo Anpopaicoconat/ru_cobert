@@ -184,7 +184,7 @@ def train_epoch(data_iter, models, has_persona, optimizers, schedulers, gradient
         # batch_persona = {"input_ids": batch[6], "attention_mask": batch[7], "token_type_ids": batch[8]}
         #if i == 0:
          #   print(batch_x['input_ids'][0])
-        print(batch_x)
+        
         output_x = context_model(**batch_x)
         output_y = response_model(**batch_y)
         
@@ -382,8 +382,8 @@ def evaluate_epoch(data_iter, models, has_persona, gradient_accumulation_steps, 
                 for i in range(num_chunks):
                     mini_batch_x = {
                         "input_ids": batch_x['input_ids'][i*chunk_size: (i+1)*chunk_size], 
-                        "attention_mask": batch_x['attention_mask'][i*chunk_size: (i+1)*chunk_size], 
-                        "token_type_ids": batch_x['token_type_ids'][i*chunk_size: (i+1)*chunk_size]
+                        "attention_mask": batch_x['attention_mask'][i*chunk_size: (i+1)*chunk_size]#, 
+                        #"token_type_ids": batch_x['token_type_ids'][i*chunk_size: (i+1)*chunk_size]
                         }
                     mini_output_x = context_model(**mini_batch_x)
                     batch_x_emb.append(mini_output_x[0].mean(dim=1)) # [(chunk_size, emb_size), ...]
