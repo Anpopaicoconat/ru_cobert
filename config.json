@@ -1,7 +1,7 @@
 {
     "raw_data_path": "data/TlkPersonaChatRus/dialogues.tsv",
     "proc_data_path": "data/TlkPersonaChatRus/tolokapersonachat.txt",
-    "model_path": "models/ru_gpt_large",
+    "model_path": "../../dialog2022/ru_gpt_large",
     "padding_side": "right",
     "save_model_path":"",
     "gradient_accumulation_steps": 4,
