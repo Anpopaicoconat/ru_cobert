@@ -9,7 +9,7 @@ def load_toloka(path):
         for line in data:
             yield json.loads(line)
 
-def tokenize(inp, tokenizer=False, max_len=32, join_token=False, type='bert'):
+def tokenize(inp, tokenizer=False, max_len=32, join_token=False, type='gpt'):
     '''
     tokenizer funk for PersonaChatTorchDataset and PersonaChatLazyDataset
     '''
@@ -21,7 +21,7 @@ def tokenize(inp, tokenizer=False, max_len=32, join_token=False, type='bert'):
         out=join_token.join(inp)
     else:
         out = inp 
-    out = tokenizer(out, padding='max_length', max_length=max_len, truncation=False, return_tensors="pt")
+    out = tokenizer(out, padding='max_length', max_length=max_len, truncation=True, return_tensors="pt")
     if type == 'bert':
         if padding_side == 'left':
             out = {k:out[k][:,-max_len:] for k in out}
