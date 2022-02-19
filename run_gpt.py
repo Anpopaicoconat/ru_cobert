@@ -117,16 +117,16 @@ with open(log_path, 'w') as log:
         for model in models:
             model.train()
 
-        #train = tqdm.tqdm(train, desc="Iteration")
-        #train_loss, (train_acc, _, _) = train_epoch(data_iter=train, 
- #                                                   models=models, has_persona=has_persona, optimizers=optimizers, 
-  #                                                  schedulers=schedulers, 
-   #                                                 gradient_accumulation_steps=gradient_accumulation_steps, 
-    #                                                device=device, fp16=fp16, 
-     #                                               amp=amp, apply_interaction=apply_interaction, 
-      #                                              matching_method=matching_method, 
-       #                                             aggregation_method=aggregation_method)
-        #epoch_train_losses.append(train_loss)
+        train = tqdm.tqdm(train, desc="Iteration")
+        train_loss, (train_acc, _, _) = train_epoch(data_iter=train, 
+                                                    models=models, has_persona=has_persona, optimizers=optimizers, 
+                                                    schedulers=schedulers, 
+                                                    gradient_accumulation_steps=gradient_accumulation_steps, 
+                                                    device=device, fp16=fp16, 
+                                                    amp=amp, apply_interaction=apply_interaction, 
+                                                    matching_method=matching_method, 
+                                                    aggregation_method=aggregation_method)
+        epoch_train_losses.append(train_loss)
 
         # evaluation
         for model in models:
