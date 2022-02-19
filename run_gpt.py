@@ -131,7 +131,7 @@ with open(log_path, 'w') as log:
         # evaluation
         for model in models:
             model.eval()
-        valid_iterator = tqdm.tqdm(val, desc="Iteration")
+        val = tqdm.tqdm(val, desc="Iteration")
         valid_loss, (valid_acc, valid_recall, valid_MRR) = evaluate_epoch(data_iter=val, models=models,
                                                                             has_persona=has_persona,
                                                                             gradient_accumulation_steps=gradient_accumulation_steps, 
