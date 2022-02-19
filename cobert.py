@@ -332,8 +332,8 @@ def evaluate_epoch(data_iter, models, has_persona, gradient_accumulation_steps, 
                     for i in range(num_chunks):
                         mini_batch_persona = {
                             "input_ids": batch_persona['input_ids'][i*chunk_size: (i+1)*chunk_size], 
-                            "attention_mask": batch_persona['attention_mask'][i*chunk_size: (i+1)*chunk_size], 
-                            "token_type_ids": batch_persona['token_type_ids'][i*chunk_size: (i+1)*chunk_size]
+                            "attention_mask": batch_persona['attention_mask'][i*chunk_size: (i+1)*chunk_size]#, 
+                            #"token_type_ids": batch_persona['token_type_ids'][i*chunk_size: (i+1)*chunk_size]
                             }
                         mini_output_persona = persona_model(**mini_batch_persona)
 
@@ -396,8 +396,8 @@ def evaluate_epoch(data_iter, models, has_persona, gradient_accumulation_steps, 
                     for i in range(num_chunks):
                         mini_batch_persona = {
                             "input_ids": batch_persona['input_ids'][i*chunk_size: (i+1)*chunk_size], 
-                            "attention_mask": batch_persona['attention_mask'][i*chunk_size: (i+1)*chunk_size], 
-                            "token_type_ids": batch_persona['token_type_ids'][i*chunk_size: (i+1)*chunk_size]
+                            "attention_mask": batch_persona['attention_mask'][i*chunk_size: (i+1)*chunk_size]#, 
+                            #"token_type_ids": batch_persona['token_type_ids'][i*chunk_size: (i+1)*chunk_size]
                             }
                         mini_output_persona = persona_model(**mini_batch_persona)
 
