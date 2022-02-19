@@ -313,8 +313,8 @@ def evaluate_epoch(data_iter, models, has_persona, gradient_accumulation_steps, 
                 for i in range(num_chunks):
                     mini_batch_x = {
                         "input_ids": batch_x['input_ids'][i*chunk_size: (i+1)*chunk_size], 
-                        "attention_mask": batch_x['attention_mask'][i*chunk_size: (i+1)*chunk_size], 
-                        "token_type_ids": batch_x['token_type_ids'][i*chunk_size: (i+1)*chunk_size]
+                        "attention_mask": batch_x['attention_mask'][i*chunk_size: (i+1)*chunk_size]#, 
+                        #"token_type_ids": batch_x['token_type_ids'][i*chunk_size: (i+1)*chunk_size]
                         }
                     mini_output_x = context_model(**mini_batch_x)
                     batch_x_emb.append(mini_output_x[0]) # [(chunk_size, seq_len, emb_size), ...]
