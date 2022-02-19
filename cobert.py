@@ -289,7 +289,7 @@ def evaluate_epoch(data_iter, models, has_persona, gradient_accumulation_steps, 
         context_model, response_model, persona_model = models
     
     for batch_idx, batch in enumerate(data_iter):
-        print(batch_idx)
+
         batch, labels = batch
         batch_x = {k:batch['context'][k].to(device) for k in batch['context']}
         batch_y = {k:batch['responce'][k].to(device) for k in batch['responce']}
