@@ -42,12 +42,12 @@ schedulers = []
 weight_decay = 0
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-tokenizer = transformers.GPT2Tokenizer.from_pretrained('sberbank-ai/rugpt2large', padding_side=padding_side)
+tokenizer = transformers.GPT2Tokenizer.from_pretrained(model_path, padding_side=padding_side)
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 tokenizer.add_tokens({'end_of_masage_token': '[EOM]', 'end_of_masage_token': '[EOPS]'}, special_tokens=True)
 tokenizer.end_of_masage_token = '[EOM]'
 tokenizer.end_of_persona_sentence_token = '[EOPS]'
-model = transformers.GPT2Model.from_pretrained('sberbank-ai/rugpt2large')
+model = transformers.GPT2Model.from_pretrained(model_path)
 model.resize_token_embeddings(len(tokenizer))
 model.config.pad_token_id = tokenizer.pad_token_id
 model.to(device)
