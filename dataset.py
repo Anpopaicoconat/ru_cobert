@@ -9,7 +9,7 @@ def load_toloka(path):
         for line in data:
             yield json.loads(line)
 
-def tokenize(inp, tokenizer=False, max_len=32, join_token=False, type='gpt'):
+def tokenize(inp, tokenizer=False, max_len=32, join_token=False, type='bert_rcls'):
     '''
     tokenizer funk for PersonaChatTorchDataset and PersonaChatLazyDataset
     '''
@@ -21,7 +21,7 @@ def tokenize(inp, tokenizer=False, max_len=32, join_token=False, type='gpt'):
         out=join_token.join(inp)
     else:
         out = inp 
-    out = tokenizer(out, padding='max_length', max_length=max_len, truncation=True, return_tensors="pt")
+    out = tokenizer(out, padding='max_length', max_length=max_len, truncation=False, return_tensors="pt")
     if type == 'bert':
         if padding_side == 'left':
             out = {k:out[k][:,-max_len:] for k in out}
@@ -32,6 +32,13 @@ def tokenize(inp, tokenizer=False, max_len=32, join_token=False, type='gpt'):
         for k in out:
             cls_padder = torch.ones_like(out[k][:,:1])*cls_id
             out[k][:,:1] = torch.where((out[k][:,:1]!=pad_id), cls_padder, out[k][:,:1])
+            out[k] = out[k].type(torch.IntTensor)
+    elif type == 'bert_rcls':
+        if type == 'bert':
+        out = {k:out[k][:,-max_len:] for k in out}
+        for k in out:
+            cls_padder = torch.ones_like(out[k][:,-1:])*cls_id
+            out[k][:,:1] = torch.where((out[k][:,-1:]!=pad_id), cls_padder, out[k][:,-1:])
             out[k] = out[k].type(torch.IntTensor)
     return out
 
