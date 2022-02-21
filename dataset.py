@@ -35,7 +35,7 @@ def tokenize(inp, tokenizer=False, max_len=32, join_token=False, type='bert_rcls
             out[k] = out[k].type(torch.IntTensor)
     elif type == 'bert_rcls':
         if type == 'bert':
-        out = {k:out[k][:,-max_len:] for k in out}
+            out = {k:out[k][:,-max_len:] for k in out}
         for k in out:
             cls_padder = torch.ones_like(out[k][:,-1:])*cls_id
             out[k][:,:1] = torch.where((out[k][:,-1:]!=pad_id), cls_padder, out[k][:,-1:])
