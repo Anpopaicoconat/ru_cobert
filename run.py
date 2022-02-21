@@ -40,7 +40,7 @@ weight_decay = 0
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-bert_path = config['bert_path']
+bert_path = config['model_path']
 proc_data = config['proc_data']
 apply_interaction = config['apply_interaction']
 aggregation_method = config['aggregation_method']
