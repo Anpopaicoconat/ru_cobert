@@ -41,7 +41,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 bert_path = config['model_path']
-proc_data = config['proc_data']
+proc_data = config['proc_data_path']
 apply_interaction = config['apply_interaction']
 aggregation_method = config['aggregation_method']
 padding_side = config['padding_side']
