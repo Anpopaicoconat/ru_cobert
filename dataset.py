@@ -9,7 +9,7 @@ def load_toloka(path):
         for line in data:
             yield json.loads(line)
 
-def tokenize(inp, tokenizer=False, max_len=32, join_token=False, type='bert_rcls'):
+def tokenize(inp, tokenizer=False, max_len=32, join_token=False, type='bert'):
     '''
     tokenizer funk for PersonaChatTorchDataset and PersonaChatLazyDataset
     '''
