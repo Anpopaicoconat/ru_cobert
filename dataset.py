@@ -21,7 +21,7 @@ def tokenize(inp, tokenizer=False, max_len=32, join_token=False, type='gpt2'):
         out=join_token.join(inp)
     else:
         out = inp 
-    out = tokenizer(out, padding='max_length', max_length=max_len, truncation=False, return_tensors="pt")
+    out = tokenizer(out, padding='max_length', max_length=max_len, truncation=True, return_tensors="pt")
     if type == 'bert':
         if padding_side == 'left':
             out = {k:out[k][:,-max_len:] for k in out}
