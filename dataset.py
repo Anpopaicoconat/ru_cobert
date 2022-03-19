@@ -124,7 +124,7 @@ def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, p
                 elif k == 'persona':
                     max_len = persona_len
                     join_token = tokenizer.end_of_persona_sentence_token
-                elif k == 'persona_oug':
+                elif k == 'persona_aug':
                     continue
                 else:
                     line[k] = [line[k]]
@@ -133,7 +133,7 @@ def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, p
                 line[k] = {inp_type:tokens[inp_type][:32] for inp_type in tokens} #КОСТЫЛЬ
             try:
                 line.pop('responce_aug')
-                line.pop('persona_oug')
+                line.pop('persona_aug')
             except KeyError:
                 pass
             print(line.keys())
