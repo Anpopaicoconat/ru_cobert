@@ -75,7 +75,7 @@ val = torch.utils.data.DataLoader(val, batch_size=32,
 print(len(train), len(val))
 
 
-t_total = len(train) // gradient_accumulation_steps * 1
+t_total = len(train) // gradient_accumulation_steps * batch_size
 for i, model in enumerate(models):
     optimizer_grouped_parameters = [
         {
