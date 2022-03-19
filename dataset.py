@@ -116,7 +116,6 @@ def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, p
                     join_token = False
                 elif k == 'responce_aug':
                     line['responce'] = random.choice(line[k])
-                    line.pop(k)
                     k = 'responce'
                     max_len = responce_len
                     join_token = False
