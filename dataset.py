@@ -105,45 +105,48 @@ def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, p
     '''
     batch = None
     for line in inp:
-        line = json.loads(line)
-        if tokenizer_func:
-            for k in line:
-                if k == 'context':
-                    max_len = context_len
-                    join_token = tokenizer.end_of_masage_token
-                elif k == 'responce':
-                    max_len = responce_len
-                    join_token = False
-                elif k == 'responce_aug':
-                    line['responce'] = random.choice(line[k])
-                    k = 'responce'
-                    max_len = responce_len
-                    join_token = False
-                elif k == 'persona':
-                    max_len = persona_len
-                    join_token = tokenizer.end_of_persona_sentence_token
-                elif k == 'persona_aug':
-                    continue
-                else:
-                    line[k] = [line[k]]
-                    continue
-                tokens = tokenizer_func(line[k], tokenizer=tokenizer, max_len=max_len, join_token=join_token)
-                line[k] = {inp_type:tokens[inp_type][:32] for inp_type in tokens} #КОСТЫЛЬ
-            try:
-                line.pop('responce_aug')
-                line.pop('persona_aug')
-            except KeyError:
-                pass
-            #print(line.keys())
-            if batch is None:
-                batch = line
-            else:
+        try:
+            line = json.loads(line)
+            if tokenizer_func:
                 for k in line:
-                    if k == 'label':
-                        batch[k]+=line[k]
+                    if k == 'context':
+                        max_len = context_len
+                        join_token = tokenizer.end_of_masage_token
+                    elif k == 'responce':
+                        max_len = responce_len
+                        join_token = False
+                    elif k == 'responce_aug':
+                        line['responce'] = random.choice(line[k])
+                        k = 'responce'
+                        max_len = responce_len
+                        join_token = False
+                    elif k == 'persona':
+                        max_len = persona_len
+                        join_token = tokenizer.end_of_persona_sentence_token
+                    elif k == 'persona_aug':
+                        continue
                     else:
-                        for inp_type in line[k]:
-                            batch[k][inp_type] = torch.cat((batch[k][inp_type], (line[k][inp_type])), 0)
+                        line[k] = [line[k]]
+                        continue
+                    tokens = tokenizer_func(line[k], tokenizer=tokenizer, max_len=max_len, join_token=join_token)
+                    line[k] = {inp_type:tokens[inp_type][:32] for inp_type in tokens} #КОСТЫЛЬ
+                try:
+                    line.pop('responce_aug')
+                    line.pop('persona_aug')
+                except KeyError:
+                    pass
+                #print(line.keys())
+                if batch is None:
+                    batch = line
+                else:
+                    for k in line:
+                        if k == 'label':
+                            batch[k]+=line[k]
+                        else:
+                            for inp_type in line[k]:
+                                batch[k][inp_type] = torch.cat((batch[k][inp_type], (line[k][inp_type])), 0)
+        except Exception as e:
+            print(line)
     return batch, batch.pop('label')
 
 class PersonaChatTorchDataset(torch.utils.data.Dataset):
