@@ -117,6 +117,7 @@ def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, p
                 elif k == 'responce_aug':
                     line['responce'] = random.choice(line[k])
                     line.pop(k)
+                    k = 'responce'
                     max_len = responce_len
                     join_token = False
                 elif k == 'persona':
@@ -126,7 +127,7 @@ def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, p
                     line[k] = [line[k]]
                     continue
                 tokens = tokenizer_func(line[k], tokenizer=tokenizer, max_len=max_len, join_token=join_token)
-                line[k] = {inp_type:tokens[inp_type][:32] for inp_type in tokens}
+                line[k] = {inp_type:tokens[inp_type][:32] for inp_type in tokens} #КОСТЫЛЬ
             if batch is None:
                 batch = line
             else:
