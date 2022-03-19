@@ -1,5 +1,6 @@
 import json
 import csv
+import random
 import torch
 import transformers
 import numpy as np
@@ -111,6 +112,11 @@ def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, p
                     max_len = context_len
                     join_token = tokenizer.end_of_masage_token
                 elif k == 'responce':
+                    max_len = responce_len
+                    join_token = False
+                elif k == 'responce_aug':
+                    line['responce'] = random.choice(line[k])
+                    line.pop(k)
                     max_len = responce_len
                     join_token = False
                 elif k == 'persona':
