@@ -112,11 +112,13 @@ def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, p
                     max_len = context_len
                     join_token = tokenizer.end_of_masage_token
                 elif k == 'responce':
+                    print(line[k])
                     max_len = responce_len
                     join_token = False
                 elif k == 'responce_aug':
                     line['responce'] = random.choice(line[k])
                     k = 'responce'
+                    print('oug>', line[k])
                     max_len = responce_len
                     join_token = False
                 elif k == 'persona':
@@ -131,6 +133,7 @@ def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, p
                 line.pop('responce_aug')
             except KeyError:
                 pass
+            print(line)
             if batch is None:
                 batch = line
             else:
