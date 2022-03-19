@@ -1,6 +1,6 @@
 {
     "raw_data_path": "data/TlkPersonaChatRus/dialogues.tsv",
-    "proc_data_path": "/home/stc/amatveeva/syntax-ru/russian.csv",
+    "proc_data_path": "/home/stc/amatveeva/retrieval/data/TolokaPersonaChat/tolokapersonachat.txt",
     "model_path": "models/deeppavlov-conv-rubert",
     "padding_side": "right",
     "save_model_path":"",
