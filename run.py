@@ -58,14 +58,14 @@ models = [bert_model]
 data = PersonaChatTorchDataset(proc_data)
 split = len(data)//config['split']
 train, val = torch.utils.data.random_split(data, [len(data)-split, split])
-train = torch.utils.data.DataLoader(train, batch_size=32,
+train = torch.utils.data.DataLoader(train, batch_size=batch_size,
                         shuffle=True, num_workers=0, 
                         collate_fn=lambda x: clf(x, tokenizer_func=tokenize, 
                                                  tokenizer=bert_tokenizer, 
                                                  context_len=context_len, 
                                                  responce_len=responce_len, 
                                                  persona_len=persona_len))
-val = torch.utils.data.DataLoader(val, batch_size=32,
+val = torch.utils.data.DataLoader(val, batch_size=batch_size,
                         shuffle=True, num_workers=0, 
                         collate_fn=lambda x: clf(x, tokenizer_func=tokenize, 
                                                  tokenizer=bert_tokenizer, 
