@@ -1,15 +1,15 @@
 {
     "raw_data_path": "data/TlkPersonaChatRus/dialogues.tsv",
-    "proc_data_path": "data/TlkPersonaChatRus/tolokapersonachat.txt",
+    "proc_data_path": "/home/stc/amatveeva/syntax-ru/russian.csv",
     "model_path": "/home/posokhov@ad.speechpro.com/projects/models/rugpt2large",
     "padding_side": "right",
     "save_model_path":"",
     "gradient_accumulation_steps": 4,
     "apply_interaction": 0,
     "matching_method": "CoBERT",
-    "aggregation_method": "cls_gpt",
+    "aggregation_method": "cls",
     "lr": 2e-5,
-    "warmup_steps": 0,
+    "warmup_steps": 500,
     "test_mode": 0,
     "context_len": 32,
     "responce_len": 32,
@@ -18,5 +18,5 @@
     "epochs": 10,
     "split": 4,
     "has_persona": 1,
-    "log_path": "logs/gpt.csv"
+    "log_path": "logs/syntax-bert.csv"
 }
