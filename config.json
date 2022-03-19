@@ -14,7 +14,7 @@
     "context_len": 32,
     "responce_len": 32,
     "persona_len": 32,
-    "batch_size": 32,
+    "batch_size": 16,
     "epochs": 10,
     "split": 4,
     "has_persona": 1,
