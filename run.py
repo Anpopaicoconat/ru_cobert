@@ -164,7 +164,7 @@ with open(log_path, 'w') as log:
             },
             {"params": [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], "weight_decay": 0.0},
         ]
-        optimizer = transformers.AdamW(optimizer_grouped_parameters, lr=lr, eps=1e-8)
+        optimizer = transformers.AdamW(optimizer_grouped_parameters, lr=lr/1.5, eps=1e-8)
 
         optimizers.append(optimizer)
 
