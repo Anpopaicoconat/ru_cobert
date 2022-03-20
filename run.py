@@ -56,7 +56,7 @@ bert_tokenizer = transformers.BertTokenizer.from_pretrained(bert_path, padding_s
 ctx_model = transformers.BertModel(bert_config).from_pretrained(bert_path)
 cnd_model = transformers.BertModel(bert_config).from_pretrained(bert_path)
 prs_model = transformers.BertModel(bert_config).from_pretrained(bert_path)
-models = [ctx_model, cnd_model, prs_model]
+all_models = [ctx_model, cnd_model, prs_model]
 data = PersonaChatTorchDataset(proc_data)
 split = len(data)//config['split']
 train, val = torch.utils.data.random_split(data, [len(data)-split, split])
@@ -108,6 +108,52 @@ best_model_statedict = {}
 with open(log_path, 'w') as log:
     writer = csv.DictWriter(log, fieldnames=['epoch', 'train_loss', 'valid_loss', 'train_acc', 'valid_acc', 'valid_recall', 'valid_MRR'], delimiter=',', quotechar='"')
     writer.writeheader()
+    models = all_models[:1]
+    for epoch in range(epochs):
+        print("Epoch", epoch+1)
+        # training
+        for model in models:
+            model.train()
+
+        train = tqdm.tqdm(train, desc="Iteration")
+        train_loss, (train_acc, _, _) = train_epoch(data_iter=train, 
+                                                    models=models, has_persona=has_persona, optimizers=optimizers, 
+                                                    schedulers=schedulers, 
+                                                    gradient_accumulation_steps=gradient_accumulation_steps, 
+                                                    device=device, fp16=fp16, 
+                                                    amp=amp, apply_interaction=apply_interaction, 
+                                                    matching_method=matching_method, 
+                                                    aggregation_method=aggregation_method)
+        epoch_train_losses.append(train_loss)
+
+        # evaluation
+        for model in models:
+            model.eval()
+        valid_iterator = tqdm.tqdm(val, desc="Iteration")
+        valid_loss, (valid_acc, valid_recall, valid_MRR) = evaluate_epoch(data_iter=val, models=models,
+                                                                            has_persona=has_persona,
+                                                                            gradient_accumulation_steps=gradient_accumulation_steps, 
+                                                                            device=device, epoch=epoch, apply_interaction=apply_interaction, 
+                                                                            matching_method=matching_method, aggregation_method=aggregation_method)
+
+        print("Epoch {0}: train loss: {1:.4f}, valid loss: {2:.4f}, train_acc: {3:.4f}, valid acc: {4:.4f}, valid recall: {5}, valid_MRR: {6:.4f}"
+            .format(epoch+1, train_loss, valid_loss, train_acc, valid_acc, valid_recall, valid_MRR))
+        writer.writerow({'epoch':epoch+1, 'train_loss':train_loss, 'valid_loss': valid_loss, 'train_acc':train_acc, 'valid_acc':valid_acc, 'valid_recall':valid_recall, 'valid_MRR':valid_MRR})
+        epoch_valid_losses.append(valid_loss)
+        epoch_valid_accs.append(valid_acc)
+        epoch_valid_recalls.append(valid_recall)
+        epoch_valid_MRRs.append(valid_MRR)
+
+        if save_model_path != "":
+            if epoch == 0:
+                for k, v in models[0].state_dict().items():
+                    best_model_statedict[k] = v.cpu()
+            else:
+                if epoch_valid_recalls[-1][0] == max([recall1 for recall1, _, _ in epoch_valid_recalls]):
+                    for k, v in models[0].state_dict().items():
+                        best_model_statedict[k] = v.cpu()
+    all_models = [m.load_state_dict(all_models[0].state_dict()) for m in  all_models]
+    models = all_models
     for epoch in range(epochs):
         print("Epoch", epoch+1)
         # training
