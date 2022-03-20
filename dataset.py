@@ -147,7 +147,6 @@ def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, p
                                 batch[k][inp_type] = torch.cat((batch[k][inp_type], (line[k][inp_type])), 0)
         except Exception as e:
             pass
-            print(line)
     return batch, batch.pop('label')
 
 class PersonaChatTorchDataset(torch.utils.data.Dataset):
