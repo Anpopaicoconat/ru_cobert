@@ -111,7 +111,7 @@ with open(log_path, 'w') as log:
     models = all_models[:1]
     optimizers = all_optimizers[:1]
     schedulers = all_schedulers[:1]
-    for epoch in range(epochs):
+    for epoch in range(epochs//3):
         print("Epoch", epoch+1)
         # training
         for model in models:
