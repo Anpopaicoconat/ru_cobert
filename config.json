@@ -5,7 +5,7 @@
     "padding_side": "right",
     "save_model_path":"",
     "gradient_accumulation_steps": 2,
-    "apply_interaction": 0,
+    "apply_interaction": 1,
     "matching_method": "CoBERT",
     "aggregation_method": "cls",
     "lr": 5e-5,
