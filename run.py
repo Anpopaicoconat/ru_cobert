@@ -78,7 +78,7 @@ print(len(train), len(val))
 
 
 t_total = len(train) // gradient_accumulation_steps * batch_size
-for i, all_model in enumerate(models):
+for i, model in enumerate(all_models):
     optimizer_grouped_parameters = [
         {
             "params": [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
