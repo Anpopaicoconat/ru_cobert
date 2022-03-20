@@ -8,7 +8,7 @@
     "apply_interaction": 0,
     "matching_method": "CoBERT",
     "aggregation_method": "cls",
-    "lr": 2e-5,
+    "lr": 5e-5,
     "warmup_steps": 500,
     "test_mode": 0,
     "context_len": 32,
