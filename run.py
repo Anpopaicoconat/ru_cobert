@@ -53,8 +53,9 @@ log_path = 'logs/'+log_path
 print(log_path)
 bert_config = transformers.BertConfig.from_pretrained(bert_path)
 bert_tokenizer = transformers.BertTokenizer.from_pretrained(bert_path, padding_side=padding_side)
-bert_model = transformers.BertModel(bert_config).from_pretrained(bert_path)
-models = [bert_model]
+ctx_model = transformers.BertModel(bert_config).from_pretrained(bert_path)
+cnd_model = transformers.BertModel(bert_config).from_pretrained(bert_path)
+models = [ctx_model, cnd_model]
 data = PersonaChatTorchDataset(proc_data)
 split = len(data)//config['split']
 train, val = torch.utils.data.random_split(data, [len(data)-split, split])
