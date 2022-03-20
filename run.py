@@ -111,12 +111,6 @@ apply_interaction = config['apply_interaction']
 aggregation_method = config['aggregation_method']
 padding_side = config['padding_side']
 
-log_path = bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) +\
-    '_' + aggregation_method + '_' + padding_side + '('+ str(lr) + ' ' + str(warmup_steps) + str(context_len)+ str(responce_len) +\
-    str(persona_len) + str(batch_size) + ')' + 'persona' + str(has_persona) + str(len(all_models)) + '.csv'
-log_path = 'logs/'+log_path
-print(log_path)
-
 bert_config = transformers.BertConfig.from_pretrained(bert_path)
 bert_tokenizer = transformers.BertTokenizer.from_pretrained(bert_path, padding_side=padding_side)
 ctx_model = transformers.BertModel(bert_config).from_pretrained(bert_path)
@@ -143,6 +137,12 @@ val = torch.utils.data.DataLoader(val, batch_size=batch_size,
                                                  persona_len=persona_len))
 print('\ntrain:', len(train), 'val:', len(val))
 t_total = len(train) // gradient_accumulation_steps * batch_size
+
+log_path = bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) +\
+    '_' + aggregation_method + '_' + padding_side + '('+ str(lr) + ' ' + str(warmup_steps) + str(context_len)+ str(responce_len) +\
+    str(persona_len) + str(batch_size) + ')' + 'persona' + str(has_persona) + str(len(all_models)) + '.csv'
+log_path = 'logs/'+log_path
+print(log_path)
 
 epoch_train_losses = []
 epoch_valid_losses = []
