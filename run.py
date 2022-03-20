@@ -137,7 +137,7 @@ val = torch.utils.data.DataLoader(val, batch_size=val_batch_size,
                                                  responce_len=responce_len, 
                                                  persona_len=persona_len))
 print('\ntrain:', len(train), 'val:', len(val))
-t_total = len(train) // gradient_accumulation_steps * batch_size
+t_total = len(train) // gradient_accumulation_steps * train_batch_size
 
 log_path = bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) +\
     '_' + aggregation_method + '_' + padding_side + '('+ str(lr) + ' ' + str(warmup_steps) + str(context_len)+ str(responce_len) +\
