@@ -138,11 +138,12 @@ with open(log_path, 'w') as log:
                             delimiter=',', 
                             quotechar='"')
     writer.writeheader()
-    run(writer, models[:1], optimizers[:1], schedulers[:1], lr, epochs, has_persona, gradient_accumulation_steps, device, fp16, 
+    run(writer, models[:1], optimizers[:1], schedulers[:1], lr, epochs//2, has_persona, gradient_accumulation_steps, device, fp16, 
         amp, apply_interaction, matching_method, aggregation_method, epoch_train_losses, epoch_valid_losses, 
         epoch_valid_accs, epoch_valid_recalls, epoch_valid_MRRs, best_model_statedict)
     if has_persona:
+        
         [m.load_state_dict(models[0].state_dict()) for m in  models]
-        run(writer, models, optimizers, schedulers, lr, epochs, has_persona, gradient_accumulation_steps, device, fp16, 
+        run(writer, models, optimizers, schedulers, lr/2, epochs, has_persona, gradient_accumulation_steps, device, fp16, 
             amp, apply_interaction, matching_method, aggregation_method, epoch_train_losses, epoch_valid_losses, 
             epoch_valid_accs, epoch_valid_recalls, epoch_valid_MRRs, best_model_statedict)
