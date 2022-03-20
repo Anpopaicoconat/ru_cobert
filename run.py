@@ -141,7 +141,7 @@ val = torch.utils.data.DataLoader(val, batch_size=batch_size,
                                                  context_len=context_len, 
                                                  responce_len=responce_len, 
                                                  persona_len=persona_len))
-print('\ntrain:', len(train), 'val:'len(val))
+print('\ntrain:', len(train), 'val:', len(val))
 t_total = len(train) // gradient_accumulation_steps * batch_size
 
 epoch_train_losses = []
