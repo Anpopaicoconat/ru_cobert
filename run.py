@@ -34,8 +34,8 @@ split = config['split']
 no_decay = ["bias", "LayerNorm.weight"]
 fp16 = False
 amp = None
-optimizers = []
-schedulers = []
+all_optimizers = []
+all_schedulers = []
 weight_decay = 0
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -78,7 +78,7 @@ print(len(train), len(val))
 
 
 t_total = len(train) // gradient_accumulation_steps * batch_size
-for i, model in enumerate(models):
+for i, all_model in enumerate(models):
     optimizer_grouped_parameters = [
         {
             "params": [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
@@ -89,13 +89,13 @@ for i, model in enumerate(models):
     optimizer = transformers.AdamW(optimizer_grouped_parameters, lr=lr, eps=1e-8)
 
 
-    optimizers.append(optimizer)
+    all_optimizers.append(optimizer)
 
     if not test_mode:
         scheduler = transformers.get_linear_schedule_with_warmup(
             optimizer, num_warmup_steps=warmup_steps, num_training_steps=t_total
         )
-        schedulers.append(scheduler)
+        all_schedulers.append(scheduler)
 
 epoch_train_losses = []
 epoch_valid_losses = []
@@ -109,6 +109,8 @@ with open(log_path, 'w') as log:
     writer = csv.DictWriter(log, fieldnames=['epoch', 'train_loss', 'valid_loss', 'train_acc', 'valid_acc', 'valid_recall', 'valid_MRR'], delimiter=',', quotechar='"')
     writer.writeheader()
     models = all_models[:1]
+    optimizers = all_optimizers[:1]
+    schedulers = all_schedulers[:1]
     for epoch in range(epochs):
         print("Epoch", epoch+1)
         # training
@@ -152,8 +154,12 @@ with open(log_path, 'w') as log:
                 if epoch_valid_recalls[-1][0] == max([recall1 for recall1, _, _ in epoch_valid_recalls]):
                     for k, v in models[0].state_dict().items():
                         best_model_statedict[k] = v.cpu()
+                        
+                        
     all_models = [m.load_state_dict(all_models[0].state_dict()) for m in  all_models]
     models = all_models
+    optimizers = all_optimizers
+    schedulers = all_schedulers
     for epoch in range(epochs):
         print("Epoch", epoch+1)
         # training
