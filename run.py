@@ -141,7 +141,7 @@ t_total = len(train) // gradient_accumulation_steps * train_batch_size
 
 log_path = bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) +\
     '_' + aggregation_method + '_' + padding_side + '('+ str(lr) + ' ' + str(warmup_steps) + str(context_len)+ str(responce_len) +\
-    str(persona_len) + str(batch_size) + ')' + 'persona' + str(has_persona) + str(len(all_models)) + '.csv'
+    str(persona_len) + str(train_batch_size)+str(val_batch_size) + ')' + 'persona' + str(has_persona) + str(len(all_models)) + '.csv'
 log_path = 'logs/'+log_path
 print(log_path)
 
