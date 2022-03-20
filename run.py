@@ -94,7 +94,8 @@ has_persona = config['has_persona']
 context_len = config['context_len']
 responce_len = config['responce_len']
 persona_len = config['persona_len']
-batch_size = config['batch_size']
+train_batch_size = config['train_batch_size']
+val_batch_size = config['val_batch_size']
 epochs = config['epochs']
 split = config['split']
 
@@ -121,14 +122,14 @@ all_models = [ctx_model, cnd_model, prs_model]
 data = PersonaChatTorchDataset(proc_data)
 split = len(data)//config['split']
 train, val = torch.utils.data.random_split(data, [len(data)-split, split])
-train = torch.utils.data.DataLoader(train, batch_size=batch_size,
+train = torch.utils.data.DataLoader(train, batch_size=train_batch_size,
                         shuffle=True, num_workers=0, 
                         collate_fn=lambda x: clf(x, tokenizer_func=tokenize, 
                                                  tokenizer=bert_tokenizer, 
                                                  context_len=context_len, 
                                                  responce_len=responce_len, 
                                                  persona_len=persona_len))
-val = torch.utils.data.DataLoader(val, batch_size=batch_size,
+val = torch.utils.data.DataLoader(val, batch_size=val_batch_size,
                         shuffle=True, num_workers=0, 
                         collate_fn=lambda x: clf(x, tokenizer_func=tokenize, 
                                                  tokenizer=bert_tokenizer, 
