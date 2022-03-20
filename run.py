@@ -10,9 +10,27 @@ from cobert import match, aggregate, fuse, dot_product_loss, train_epoch, evalua
 from dataset import PersonaChatTorchDataset, clf, tokenize
 from util import logger
 
-def run(train, val, models, optimizers, schedulers, lr, epochs, has_persona, gradient_accumulation_steps, device, fp16, 
+def run(train, val, models, lr, t_total, epochs, has_persona, gradient_accumulation_steps, device, fp16, 
         amp, apply_interaction, matching_method, aggregation_method, epoch_train_losses, epoch_valid_losses, 
         epoch_valid_accs, epoch_valid_recalls, epoch_valid_MRRs, best_model_statedict, writer=None, save_model_path=False, test_mode=False):
+
+    optimizers = []
+    schedulers = []
+    for i, model in enumerate(models):
+        optimizer_grouped_parameters = [
+            {
+                "params": [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
+                "weight_decay": weight_decay,
+            },
+            {"params": [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], "weight_decay": 0.0},
+        ]
+        optimizer = transformers.AdamW(optimizer_grouped_parameters, lr=lr, eps=1e-8)
+        optimizers.append(optimizer)
+        scheduler = transformers.get_linear_schedule_with_warmup(
+            optimizer, num_warmup_steps=warmup_steps, num_training_steps=t_total
+        )
+        schedulers.append(scheduler)
+        
     for epoch in range(epochs):
         print("Epoch", epoch+1, '/', epochs)
         # training
@@ -124,7 +142,7 @@ val = torch.utils.data.DataLoader(val, batch_size=batch_size,
                                                  responce_len=responce_len, 
                                                  persona_len=persona_len))
 print('\ntrain:', len(train), 'val:'len(val))
-
+t_total = len(train) // gradient_accumulation_steps * batch_size
 
 epoch_train_losses = []
 epoch_valid_losses = []
@@ -138,12 +156,14 @@ with open(log_path, 'w') as log:
                             delimiter=',', 
                             quotechar='"')
     writer.writeheader()
-    run(writer, models[:1], optimizers[:1], schedulers[:1], lr, epochs//2, has_persona, gradient_accumulation_steps, device, fp16, 
+    
+    models = all_models[:1]
+    run(train, val, models, lr, t_total, epochs, has_persona, gradient_accumulation_steps, device, fp16, 
         amp, apply_interaction, matching_method, aggregation_method, epoch_train_losses, epoch_valid_losses, 
-        epoch_valid_accs, epoch_valid_recalls, epoch_valid_MRRs, best_model_statedict)
+        epoch_valid_accs, epoch_valid_recalls, epoch_valid_MRRs, best_model_statedict, writer, save_model_path, test_mode)
+    
     if has_persona:
-        
-        [m.load_state_dict(models[0].state_dict()) for m in  models]
-        run(writer, models, optimizers, schedulers, lr/2, epochs, has_persona, gradient_accumulation_steps, device, fp16, 
+        [m.load_state_dict(models[0].state_dict()) for m in  all_models]
+        run(train, val, all_models, lr, t_total, epochs, has_persona, gradient_accumulation_steps, device, fp16, 
             amp, apply_interaction, matching_method, aggregation_method, epoch_train_losses, epoch_valid_losses, 
-            epoch_valid_accs, epoch_valid_recalls, epoch_valid_MRRs, best_model_statedict)
+            epoch_valid_accs, epoch_valid_recalls, epoch_valid_MRRs, best_model_statedict, writer, save_model_path, test_mode)
