@@ -80,6 +80,7 @@ for x, y in train:
   context = x['context']
   context = x['responce']
   context = x['persona']
-  context_text = bert_tokenizer.decode(context['input_ids'])
+  print(context['input_ids'])
+  context_text = bert_tokenizer.decode(context['input_ids'][0])
   print(context_text)
   break
