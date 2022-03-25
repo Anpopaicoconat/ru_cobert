@@ -135,7 +135,7 @@ def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, p
                     line.pop('persona_aug')
                 except KeyError:
                     pass
-                #print(line.keys())
+                print('\n+++++++\n', line, '\n')
                 if batch is None:
                     batch = line
                 else:
