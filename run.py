@@ -130,14 +130,16 @@ train = torch.utils.data.DataLoader(train, batch_size=train_batch_size,
                                                  responce_len=responce_len, 
                                                  persona_len=persona_len,
                                                  type='bert',
-                                                 persona_use='concat'))
+                                                 persona_use='split'))
 val = torch.utils.data.DataLoader(val, batch_size=val_batch_size,
                         shuffle=True, num_workers=0, 
                         collate_fn=lambda x: clf(x, tokenizer_func=tokenize, 
                                                  tokenizer=bert_tokenizer, 
                                                  context_len=context_len, 
                                                  responce_len=responce_len, 
-                                                 persona_len=persona_len))
+                                                 persona_len=persona_len,
+                                                 type='bert',
+                                                 persona_use='concat'))
 print('\ntrain:', len(train), 'val:', len(val))
 t_total = len(train) // gradient_accumulation_steps * train_batch_size
 
