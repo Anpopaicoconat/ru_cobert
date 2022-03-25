@@ -404,9 +404,9 @@ def evaluate_epoch(data_iter, models, has_persona, gradient_accumulation_steps, 
                         # [(chunk_size, emb_size), ...]
                         batch_persona_emb.append(mini_output_persona[0].mean(dim=1))
                        
-            with torch.no_grad():
-                batch_persona_emb = torch.cat(batch_persona_emb, dim=0)
-                batch_x_emb = (batch_x_emb + batch_persona_emb)/2
+                with torch.no_grad():
+                    batch_persona_emb = torch.cat(batch_persona_emb, dim=0)
+                    batch_x_emb = (batch_x_emb + batch_persona_emb)/2
                 
                 output_y = response_model(**batch_y)
                 batch_y_emb = output_y[0].mean(dim=1)
