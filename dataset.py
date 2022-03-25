@@ -138,7 +138,7 @@ def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, p
                 if persona_use == 'concat':
                     keys_l = list(line['context'].keys())
                     for k in keys_l:
-                        line['context'][k] = torch.cat([line['context'][k], line['persona'][k]][:, 1:], dim=1)
+                        line['context'][k] = torch.cat([line['context'][k], line['persona'][k][:, 1:]], dim=1)
                 if batch is None:
                     batch = line
                 else:
