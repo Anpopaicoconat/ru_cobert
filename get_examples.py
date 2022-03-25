@@ -47,10 +47,6 @@ padding_side = config['padding_side']
 
 bert_config = transformers.BertConfig.from_pretrained(bert_path)
 bert_tokenizer = transformers.BertTokenizer.from_pretrained(bert_path, padding_side=padding_side)
-ctx_model = transformers.BertModel(bert_config).from_pretrained(bert_path)
-cnd_model = transformers.BertModel(bert_config).from_pretrained(bert_path)
-prs_model = transformers.BertModel(bert_config).from_pretrained(bert_path)
-all_models = [ctx_model, cnd_model, prs_model]
 
 data = PersonaChatTorchDataset(proc_data)
 split = len(data)//config['split']
@@ -78,9 +74,11 @@ t_total = len(train) // gradient_accumulation_steps * train_batch_size
 
 for x, y in train:
   context = x['context']
-  context = x['responce']
-  context = x['persona']
+  responce = x['responce']
+  persona = x['persona']
   print(context['input_ids'])
   context_text = bert_tokenizer.decode(context['input_ids'][0])
+  persona_text = bert_tokenizer.decode(persona['input_ids'][0])
   print(context_text)
+  print(persona_text)
   break
