@@ -221,7 +221,6 @@ def train_epoch(data_iter, models, has_persona, optimizers, schedulers, gradient
                 if fp16:
                     torch.nn.utils.clip_grad_norm_(amp.master_params(optimizer), 1)
                 else:
-                    torch.nn.utils.clip_grad_norm_(model.parameters(), 5)
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1)
                 # torch.nn.utils.clip_grad_norm_(model.parameters(), 1)
                 optimizer.step()
