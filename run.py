@@ -163,7 +163,7 @@ with open(log_path, 'w') as log:
     writer.writeheader()
     
     models = all_models[:1]
-    run(train, val, models, lr, t_total, 0, has_persona, gradient_accumulation_steps, device, fp16, 
+    run(train, val, models, lr, t_total, 5, has_persona, gradient_accumulation_steps, device, fp16, 
         amp, apply_interaction, matching_method, aggregation_method, epoch_train_losses, epoch_valid_losses, 
         epoch_valid_accs, epoch_valid_recalls, epoch_valid_MRRs, best_model_statedict, writer, save_model_path, test_mode)
     
