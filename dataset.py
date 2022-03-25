@@ -140,7 +140,7 @@ def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, p
                     keys_l = list(line['context'].keys())
                     for k in keys_l:
                         print(k)
-                        line['context'][k] = torch.cat([line['context'][k], line['persona'][k]])
+                        line['context'][k] = torch.cat([line['context'][k], line['persona'][k]], dim=1)
                 print('\n-------\n', line, '\n')
                 if batch is None:
                     batch = line
