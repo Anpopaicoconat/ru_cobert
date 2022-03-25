@@ -77,6 +77,8 @@ print('\ntrain:', len(train), 'val:', len(val))
 t_total = len(train) // gradient_accumulation_steps * train_batch_size
 
 for x, y in train:
-  print(x, y)
-  bert_tokenizer.decode(x['input_ids'][0][0])
+  context = x['context']
+  context = x['responce']
+  context = x['persona']
+  bert_tokenizer.decode(context['input_ids'][0][0])
   break
