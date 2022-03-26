@@ -78,7 +78,7 @@ def run(train, val, models, lr, t_total, epochs, has_persona, gradient_accumulat
                     for k, v in models.state_dict().items():
                         best_model_statedict[k] = v.cpu()
                         
-with open('/content/drive/MyDrive/cobert/ru_cobert/config.json', 'r') as config:
+with open('config.json', 'r') as config:
     config  = json.loads(config.read())
 
 save_model_path = config['save_model_path']
