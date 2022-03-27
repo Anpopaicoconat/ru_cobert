@@ -185,6 +185,6 @@ with open(log_path, 'w') as log:
         
         if has_persona:
             [m.load_state_dict(models[0].state_dict()) for m in  all_models]
-            run(train, val, all_models, lr/4, t_total, 10, has_persona, gradient_accumulation_steps, device, fp16, 
+            run(train, val, all_models, lr/6, t_total, 10, has_persona, gradient_accumulation_steps, device, fp16, 
                 amp, apply_interaction, matching_method, aggregation_method, epoch_train_losses, epoch_valid_losses, 
                 epoch_valid_accs, epoch_valid_recalls, epoch_valid_MRRs, best_model_statedict, writer, save_model_path, test_mode)
