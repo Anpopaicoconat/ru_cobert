@@ -118,7 +118,8 @@ k_folds = 5 #Возможно это можно записать в конфиг
 bert_config = transformers.BertConfig.from_pretrained(bert_path)
 bert_tokenizer = transformers.BertTokenizer.from_pretrained(bert_path, padding_side=padding_side)
 
-data = PersonaChatTorchDataset(proc_data)
+og_data = PersonaChatTorchDataset('/home/stc/amatveeva/syntax/dialogues.json') ###КОСТЫЛЬ!!!
+aug_data = PersonaChatTorchDataset('/home/stc/amatveeva/syntax/test_both_original_aug.json.json')###КОСТЫЛЬ!!!
 
 # Define the K-fold Cross Validator
 kfold = KFold(n_splits=k_folds, shuffle=True)
@@ -151,7 +152,7 @@ with open(log_path, 'w') as log:
         #train, val = torch.utils.data.random_split(data, [len(data)-split, split])
 
         #For cross-validation shuffle=False, sampler=train_subsampler/val_subsampler
-        train = torch.utils.data.DataLoader(data, batch_size=train_batch_size,
+        train = torch.utils.data.DataLoader(aug_data, batch_size=train_batch_size,
                                 shuffle=False, num_workers=8, 
                                 sampler=train_subsampler,
                                 collate_fn=lambda x: clf(x, tokenizer_func=tokenize, 
@@ -159,7 +160,7 @@ with open(log_path, 'w') as log:
                                                         context_len=context_len, 
                                                         responce_len=responce_len, 
                                                         persona_len=persona_len))
-        val = torch.utils.data.DataLoader(data, batch_size=val_batch_size,
+        val = torch.utils.data.DataLoader(og_data, batch_size=val_batch_size,
                                 shuffle=False, num_workers=8, 
                                 sampler=val_subsampler,
                                 collate_fn=lambda x: clf(x, tokenizer_func=tokenize, 
