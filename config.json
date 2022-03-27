@@ -1,6 +1,6 @@
 {
     "raw_data_path": "data/TlkPersonaChatRus/dialogues.tsv",
-    "proc_data_path": "/home/stc/amatveeva/syntax/test_both_original_aug.json",
+    "proc_data_path": "/home/stc/amatveeva/syntax/dialogues.json",
     "model_path": "models/enbert",
     "padding_side": "right",
     "save_model_path":"",
