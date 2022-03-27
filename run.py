@@ -148,7 +148,7 @@ with open(log_path, 'w') as log:
         train_subsampler = torch.utils.data.SubsetRandomSampler(train_ids)
         val_subsampler = torch.utils.data.SubsetRandomSampler(val_ids)
 
-        split = len(data)//config['split']
+        #split = len(data)//config['split']
         #train, val = torch.utils.data.random_split(data, [len(data)-split, split])
 
         #For cross-validation shuffle=False, sampler=train_subsampler/val_subsampler
