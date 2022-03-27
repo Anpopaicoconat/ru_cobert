@@ -109,10 +109,13 @@ def clf(inp, tokenizer_func, tokenizer=False, context_len=32, responce_len=32, p
                         max_len = responce_len
                         join_token = False
                     elif k == 'responce_aug':
-                        line['responce'] = random.choice(line[k])
-                        k = 'responce'
-                        max_len = responce_len
-                        join_token = False
+                        if random.random()>0.8:
+                            line['responce'] = random.choice(line[k])
+                            k = 'responce'
+                            max_len = responce_len
+                            join_token = False
+                        else:
+                            continue
                     elif k == 'persona':
                         max_len = persona_len
                         join_token = tokenizer.end_of_persona_sentence_token
