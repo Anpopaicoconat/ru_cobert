@@ -137,7 +137,7 @@ with open(log_path, 'w') as log:
     writer.writeheader()
 
     # K-fold Cross Validation model running
-    for fold, (train_ids, val_ids) in enumerate(kfold.split(data)):
+    for fold, (train_ids, val_ids) in enumerate(kfold.split(aug_data)):
         ctx_model = transformers.BertModel(bert_config).from_pretrained(bert_path)
         cnd_model = transformers.BertModel(bert_config).from_pretrained(bert_path)
         prs_model = transformers.BertModel(bert_config).from_pretrained(bert_path)
