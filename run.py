@@ -119,7 +119,7 @@ bert_config = transformers.BertConfig.from_pretrained(bert_path)
 bert_tokenizer = transformers.BertTokenizer.from_pretrained(bert_path, padding_side=padding_side)
 
 og_data = PersonaChatTorchDataset('/home/stc/amatveeva/syntax-ru/russian.csv') ###КОСТЫЛЬ!!! russian.csv
-aug_data = PersonaChatTorchDataset('/home/stc/amatveeva/syntax-ru/test_both_original_aug_ru2.json')###КОСТЫЛЬ!!!
+aug_data = PersonaChatTorchDataset('/home/stc/amatveeva/syntax-ru/russian.csv')###КОСТЫЛЬ!!!
 
 # Define the K-fold Cross Validator
 kfold = KFold(n_splits=k_folds, shuffle=True)
