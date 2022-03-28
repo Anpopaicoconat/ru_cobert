@@ -113,7 +113,7 @@ aggregation_method = config['aggregation_method']
 padding_side = config['padding_side']
 
 #k_folds = config['k_folds']
-k_folds = 1 #Возможно это можно записать в конфиг
+k_folds = 2 #Возможно это можно записать в конфиг
 
 bert_config = transformers.BertConfig.from_pretrained(bert_path)
 bert_tokenizer = transformers.BertTokenizer.from_pretrained(bert_path, padding_side=padding_side)
