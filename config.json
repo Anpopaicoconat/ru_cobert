@@ -1,7 +1,7 @@
 {
     "raw_data_path": "data/TlkPersonaChatRus/dialogues.tsv",
     "proc_data_path": "data/TlkPersonaChatRus/tolokapersonachat.txt",
-    "model_path": "models/rubert",
+    "model_path": "/home/posokhov@ad.speechpro.com/projects/models/conversational",
     "padding_side": "right",
     "save_model_path":"",
     "gradient_accumulation_steps": 2,
