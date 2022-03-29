@@ -121,9 +121,7 @@ val = torch.utils.data.DataLoader(val, batch_size=val_batch_size,
                                                  persona_len=persona_len))
 print('\ntrain:', len(train), 'val:', len(val))
 t_total = len(train) // gradient_accumulation_steps * train_batch_size
-log_path = bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) +\
-    '_' + aggregation_method + '_' + padding_side + '('+ str(lr) + ' ' + str(warmup_steps) + str(context_len)+ str(responce_len) +\
-    str(persona_len) + str(train_batch_size)+str(val_batch_size) + ')' + 'persona' + str(has_persona) + str(len(all_models)) + '.csv'
+log_path = '(5-10)'+bert_path.split('/')[-1] + '_' + proc_data.split('/')[-1].split('.')[0] + '_interaction' + str(apply_interaction) +'_' + aggregation_method + '.csv'
 log_path = 'logs/'+log_path
 print(log_path)
 epoch_train_losses = []
@@ -135,17 +133,17 @@ best_model_statedict = {}
                     
 with open(log_path, 'w') as log:
     writer = csv.DictWriter(log, fieldnames=['epoch', 'train_loss', 'valid_loss', 'train_acc', 'valid_acc', 'valid_r1', 'valid_r5', 'valid_r10', 'valid_MRR'],
-                            delimiter=',', 
+                            delimiter=';', 
                             quotechar='"')
     writer.writeheader()
 
     models = all_models[:1]
-    run(train, val, models, lr, t_total, 0, has_persona, gradient_accumulation_steps, device, fp16, 
+    run(train, val, models, lr, t_total, 5, has_persona, gradient_accumulation_steps, device, fp16, 
         amp, apply_interaction, matching_method, aggregation_method, epoch_train_losses, epoch_valid_losses, 
         epoch_valid_accs, epoch_valid_recalls, epoch_valid_MRRs, best_model_statedict, writer, save_model_path, test_mode)
 
     if has_persona:
         [m.load_state_dict(models[0].state_dict()) for m in  all_models]
-        run(train, val, all_models, lr, t_total, epochs, has_persona, gradient_accumulation_steps, device, fp16, 
+        run(train, val, all_models, lr/10, t_total, 10, has_persona, gradient_accumulation_steps, device, fp16, 
             amp, apply_interaction, matching_method, aggregation_method, epoch_train_losses, epoch_valid_losses, 
             epoch_valid_accs, epoch_valid_recalls, epoch_valid_MRRs, best_model_statedict, writer, save_model_path, test_mode)
